@@ -28,6 +28,8 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
     private Triangle triangle;
     private Skybox skybox;
 
+    private Camera camera;
+
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjectionMatrix = new float[16];
