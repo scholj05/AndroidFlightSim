@@ -1,5 +1,7 @@
 package Units;
 
+import android.util.Log;
+
 /**
  * Quaternion library sourced from https://github.com/TraxNet/ShadingZen/blob/master/library/src/main/java/org/traxnet/shadingzen/math/Quaternion.java
  */
@@ -252,5 +254,4 @@ public class Quaternion {
         ret.w = this.w * scalar;
         return ret;
     }
-
 }

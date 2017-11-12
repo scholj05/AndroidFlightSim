@@ -23,6 +23,7 @@ public class GameLoop extends Thread
             //Log.d("TAG", "GAMELOOP");
             openGLView.requestRender();
 
+
             try
             {
                 Thread.sleep(16);

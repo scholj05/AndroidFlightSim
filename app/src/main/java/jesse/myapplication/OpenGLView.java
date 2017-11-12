@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 public class OpenGLView extends GLSurfaceView{
 
     OpenGLRenderer mRenderer = new OpenGLRenderer();
+    Camera camera = mRenderer.GetCamera();
     GameLoop mGameLoop;
     float lastX = 0, lastY = 0;
 
@@ -42,10 +43,11 @@ public class OpenGLView extends GLSurfaceView{
             case MotionEvent.ACTION_MOVE:
                 float deltaX = newX - lastX;
                 float deltaY = newY - lastY;
-                mRenderer.eyeZ += deltaY / 50;
-                mRenderer.upX += deltaX / 50;
-                Log.d("TOUCH", "eyeZ " + Float.toString(mRenderer.eyeZ));
-                Log.d("TOUCH", "upX " + Float.toString(mRenderer.upX));
+                mRenderer.camera.Yaw(deltaX / 1000);
+                mRenderer.camera.Pitch(deltaY / 1000);
+                mRenderer.camera.PrintLog();
+                //Log.d("TOUCH", "eyeZ " + Float.toString(mRenderer.eyeZ));
+                //Log.d("TOUCH", "upX " + Float.toString(mRenderer.upX));
                 lastX = newX;
                 lastY = newY;
 

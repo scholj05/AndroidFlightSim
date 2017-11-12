@@ -1,5 +1,7 @@
 package jesse.myapplication;
 
+import android.util.Log;
+
 import java.util.Vector;
 
 import Units.Matrix4;
@@ -21,6 +23,7 @@ public class Camera {
     public Camera(float x, float y, float z)
     {
         pitch = yaw = roll = 0.0f;
+        position = new Vector3(0, 0, 0);
         orientation = new Quaternion(x, y, z, 0);
         MoveLeft(x);
         MoveUp(y);
@@ -59,6 +62,7 @@ public class Camera {
     public void Rotate(float angleRadians, float x, float y, float z)
     {
         Quaternion q = new Quaternion(x, y, z, angleRadians);
+        Rotate(q);
     }
 
     public  void Rotate(Quaternion q)
@@ -124,6 +128,14 @@ public class Camera {
         return viewMatrix;
     }
 
+    public float[] GetInverseViewMatrixAsArray()
+    {
+        Matrix4 viewMatrix = orientation.toMatrix();
+        viewMatrix.setTranslation(position.mul(-1.0f));
+        viewMatrix.inverse();
+        return viewMatrix.getAsArray();
+    }
+
     public Vector3 GetEulerAngles()
     {
         float[] matrix = GetViewMatrixAsArray();
@@ -151,5 +163,30 @@ public class Camera {
     private float DegToRad(float degree)
     {
         return degree * ((float)Math.PI / 180);
+    }
+
+
+    public void PrintLog()
+    {
+        float[] matrix = GetViewMatrixAsArray();
+        Log.d("CameraVec", Float.toString(pitch) + ", " + Float.toString(yaw) + ", " + Float.toString(roll));
+        /*Log.d("CameraMatrix",
+                Float.toString(matrix[0]) + ", " +
+                Float.toString(matrix[1]) + ", " +
+                Float.toString(matrix[2]) + ", " +
+                Float.toString(matrix[3]) + ", " +
+                Float.toString(matrix[4]) + ", " +
+                Float.toString(matrix[5]) + ", " +
+                Float.toString(matrix[6]) + ", " +
+                Float.toString(matrix[7]) + ", " +
+                Float.toString(matrix[8]) + ", " +
+                Float.toString(matrix[9]) + ", " +
+                Float.toString(matrix[10]) + ", " +
+                Float.toString(matrix[11]) + ", " +
+                Float.toString(matrix[12]) + ", " +
+                Float.toString(matrix[13]) + ", " +
+                Float.toString(matrix[14]) + ", " +
+                Float.toString(matrix[15]) + ", "
+        );*/
     }
 }

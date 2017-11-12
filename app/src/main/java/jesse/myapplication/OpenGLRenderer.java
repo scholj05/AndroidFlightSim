@@ -28,12 +28,12 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
     private Triangle triangle;
     private Skybox skybox;
 
-    private Camera camera;
+    public Camera camera;
 
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjectionMatrix = new float[16];
-    private final float[] mViewMatrix = new float[16];
+    private float[] mViewMatrix = new float[16];
     private final float[] mRotationMatrix = new float[16];
     private final float[] mSkyboxRotationMatrix = new float[16];
 
@@ -60,6 +60,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 
         triangle = new Triangle(this);
         skybox = new Skybox(this);
+        camera = new Camera(0, 0, 3);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
         float ratio = (float) width / height;
 
         float fov = 90.0f;
-        float near = 1.0f;
+        float near = 0.1f;
         float far = 1000.0f;
         float top = (float) Math.tan(fov * Math.PI / 360.0f) * near;
         float bottom = -top;
@@ -84,7 +85,9 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
-        Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, lookX, lookY, lookZ, upX, upY, upZ);
+        mViewMatrix = camera.GetViewMatrixAsArray();
+
+        //Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, lookX, lookY, lookZ, upX, upY, upZ);
 
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
@@ -97,7 +100,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 
         Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
 
-        triangle.draw(scratch);
+        //triangle.draw(scratch);
         skybox.draw(skyboxScratch);
     }
 
@@ -117,6 +120,11 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
             Log.e("GLERROR", gl + ": glError " + error);
             throw new RuntimeException(gl + ": glError " + error);
         }
+    }
+
+    public Camera GetCamera()
+    {
+        return camera;
     }
 
 
