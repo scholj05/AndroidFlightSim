@@ -37,15 +37,15 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
     private final float[] mRotationMatrix = new float[16];
     private final float[] mSkyboxRotationMatrix = new float[16];
 
-    private float eyeX = 0.0f;
-    private float eyeY = 0.0f;
-    private float eyeZ = 0.0f;
-    private float lookX = 0.0f;
-    private float lookY = 0.0f;
-    private float lookZ = 0.0f;
-    private float upX = 0.0f;
-    private float upY = 0.0f;
-    private float upZ = 0.0f;
+    public float eyeX = 0.0f;
+    public float eyeY = 0.0f;
+    public float eyeZ = 1.5f;
+    public float lookX = 0.0f;
+    public float lookY = 0.0f;
+    public float lookZ = -5.0f;
+    public float upX = 0.0f;
+    public float upY = 1.0f;
+    public float upZ = 0.0f;
 
     public OpenGLRenderer()
     {
@@ -84,8 +84,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
-        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-        //Matrix.
+        Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, lookX, lookY, lookZ, upX, upY, upZ);
 
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
@@ -99,7 +98,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
         Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
 
         triangle.draw(scratch);
-        skybox.draw(mMVPMatrix);
+        skybox.draw(skyboxScratch);
     }
 
     public static int loadShader(int type, String ShaderCode)

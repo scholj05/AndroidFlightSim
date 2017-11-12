@@ -2,6 +2,7 @@ package jesse.myapplication;
 
 import java.util.Vector;
 
+import Units.Matrix4;
 import Units.Quaternion;
 import Units.Vector3;
 
@@ -14,7 +15,7 @@ public class Camera {
     private static OpenGLRenderer mRenderer;
 
     private float pitch, yaw, roll;
-    private float[] position = new float[3];
+    private Vector3 position;
     private Quaternion orientation;
 
     public Camera(float x, float y, float z)
@@ -51,63 +52,95 @@ public class Camera {
 
     public void Turn(float turnRadians)
     {
-        //Quaternion q = new Quaternion(turnRadians, orientation.dot() * new Vector3(0.0f, 1.0f, 0.0f));
-        //q.
+        orientation.setRotation(0.0f, 1.0f, 0.0f, turnRadians);
+        Rotate(orientation);
     }
 
     public void Rotate(float angleRadians, float x, float y, float z)
     {
-
+        Quaternion q = new Quaternion(x, y, z, angleRadians);
     }
 
-    public  void Rotate(float[] rotationQuat)
+    public  void Rotate(Quaternion q)
     {
-
+        orientation = q.mul(orientation);
     }
 
-    public float[] GetForward()
+    public Vector3 GetForward()
     {
-        return new float[0];
+        Quaternion q = orientation.conjugate();
+        q.mulInplace(new Quaternion(0.0f, 0.0f, -1.0f, 0.0f));
+        return new Vector3(q.x, q.y, q.z);
     }
 
-    public float[] GetLeft()
+    public Vector3 GetLeft()
     {
-        return new float[0];
+        Quaternion q = orientation.conjugate();
+        q.mulInplace(new Quaternion(-1.0f, 0.0f, 0.0f, 0.0f));
+        return new Vector3(q.x, q.y, q.z);
     }
 
-    public float[] GetUp()
+    public Vector3 GetUp()
     {
-        return new float[0];
+        Quaternion q = orientation.conjugate();
+        q.mulInplace(new Quaternion(0.0f, 1.0f, 0.0f, 0.0f));
+        return new Vector3(q.x, q.y, q.z);
     }
 
     public void MoveForward(float movement)
     {
-
+        position.add(GetForward().mul(movement));
     }
 
     public void MoveLeft(float movement)
     {
-
+        position.add(GetLeft().mul(movement));
     }
 
     public void MoveUp(float movement)
     {
-
+        position.add(GetUp().mul(movement));
     }
 
-    public float[] GetViewMatrix()
+    public Matrix4 GetViewMatrix()
     {
-        return new float[0];
+        Matrix4 viewMatrix = orientation.toMatrix();
+        viewMatrix.setTranslation(position.mul(-1.0f));
+        return viewMatrix;
     }
 
-    public float[] GetInverseViewMatrix()
+    public float[] GetViewMatrixAsArray()
     {
-        return new float[0];
+        Matrix4 viewMatrix = orientation.toMatrix();
+        viewMatrix.setTranslation(position.mul(-1.0f));
+        return viewMatrix.getAsArray();
     }
 
-    public float[] GetEulerAngles()
+    public Matrix4 GetInverseViewMatrix()
     {
-        return new float[0];
+        Matrix4 viewMatrix = orientation.toMatrix();
+        viewMatrix.setTranslation(position.mul(-1.0f));
+        viewMatrix.inverse();
+        return viewMatrix;
+    }
+
+    public Vector3 GetEulerAngles()
+    {
+        float[] matrix = GetViewMatrixAsArray();
+
+        if (matrix[0] == 1.0f || matrix[0] == -1.0f)
+        {
+            yaw = (float)Math.atan2((double)matrix[2], (double)matrix[11]);
+            pitch = 0;
+            roll = 0;
+        }
+        else
+        {
+            yaw = (float)Math.atan2((double)-matrix[8], (double)matrix[0]);
+            pitch = (float)Math.asin((double)matrix[4]);
+            roll = (float)Math.atan2((double)-matrix[6], (double)matrix[5]);
+        }
+        return new Vector3(RadToDeg(pitch), RadToDeg(yaw), RadToDeg(roll));
     }
 
     private float RadToDeg(float radian)

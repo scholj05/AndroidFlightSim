@@ -42,14 +42,16 @@ public class OpenGLView extends GLSurfaceView{
             case MotionEvent.ACTION_MOVE:
                 float deltaX = newX - lastX;
                 float deltaY = newY - lastY;
-                //mRenderer.zDistance += deltaY / 100;
-                //mRenderer.eyeY += deltaX / 100;
-                //Log.d("TOUCH", Float.toString(mRenderer.yRotation));
+                mRenderer.eyeZ += deltaY / 50;
+                mRenderer.upX += deltaX / 50;
+                Log.d("TOUCH", "eyeZ " + Float.toString(mRenderer.eyeZ));
+                Log.d("TOUCH", "upX " + Float.toString(mRenderer.upX));
+                lastX = newX;
+                lastY = newY;
 
                 return true;
             case MotionEvent.ACTION_UP:
-                lastX = newX;
-                lastY = newY;
+
                 return true;
         }
 
