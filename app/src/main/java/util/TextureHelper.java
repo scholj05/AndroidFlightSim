@@ -1,7 +1,7 @@
 package util;
 
 /**
- * Created by Jesse on 1/11/2017.
+ * Created by Jesse on 1/11/2017.  Source http://www.learnopengles.com/
  */
 import android.content.Context;
 import android.graphics.Bitmap;

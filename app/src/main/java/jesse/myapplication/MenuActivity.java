@@ -14,6 +14,7 @@ public class MenuActivity extends AppCompatActivity {
     private OpenGLView openGLView;
     private OpenGLRenderer openGLRenderer;
     private static boolean supportsEs2;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,18 +25,24 @@ public class MenuActivity extends AppCompatActivity {
         setContentView(openGLView);
         final ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
-        //setContentView(R.layout.activity_menu);
-        //openGLView = (OpenGLView) findViewById(R.id.openGLView);
 
         final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
         supportsEs2 = configurationInfo.reqGlEsVersion >= 0x20000;
+
+        this.context = this;
     }
 
     public static boolean ES2Support()
     {
         return supportsEs2;
     }
+
+    public Context getContext()
+    {
+        return this;
+    }
+
 /*
     @Override
     protected void onResume() {

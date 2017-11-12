@@ -25,6 +25,8 @@ import static java.lang.Math.tan;
 
 public class OpenGLRenderer implements GLSurfaceView.Renderer{
 
+    private Context context;
+
     private Triangle triangle;
     private Skybox skybox;
 
@@ -47,8 +49,9 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
     public float upY = 1.0f;
     public float upZ = 0.0f;
 
-    public OpenGLRenderer()
+    public OpenGLRenderer(Context context)
     {
+        this.context = context;
     }
 
     @Override
@@ -58,8 +61,8 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         GLES20.glDepthFunc(GLES20.GL_LEQUAL);
 
-        triangle = new Triangle(this);
-        skybox = new Skybox(this);
+        //triangle = new Triangle(this);
+        skybox = new Skybox(this, context);
         camera = new Camera(0, 0, 3);
     }
 
