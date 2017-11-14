@@ -20,14 +20,17 @@ public class Camera {
     private Vector3 position;
     private Quaternion orientation;
 
-    public Camera(float x, float y, float z)
+    public Camera(float positionX, float positionY, float positionZ, float rotationX, float rotationY, float rotationZ)
     {
         pitch = yaw = roll = 0.0f;
-        position = new Vector3(0, 0, 0);
-        orientation = new Quaternion(x, y, z, 0);
-        MoveLeft(x);
-        MoveUp(y);
-        MoveForward(z);
+        Vector3 angles = new Vector3(DegToRad(rotationX), DegToRad(rotationY), DegToRad(rotationZ));
+        orientation = new Quaternion(angles.x, angles.y, angles.z, 0);
+        position = new Vector3(0.0f, 0.0f, 0.0f);
+        MoveLeft(positionX);
+        MoveUp(positionY);
+        MoveForward(positionZ);
+
+
     }
 
     public void SetRenderer(OpenGLRenderer renderer)
@@ -37,23 +40,23 @@ public class Camera {
 
     public void Pitch(float pitchRadians)
     {
-        Rotate(pitchRadians, 1.0f, 0.0f, 0.0f);
+        Rotate(pitchRadians,  new Vector3(1.0f, 0.0f, 0.0f));
         pitch += RadToDeg(pitchRadians);
-        Log.d("CAMERA", "pitch: " + Float.toString(pitch));
+        //Log.d("CAMERA", "pitch: " + Float.toString(pitch));
     }
 
     public void Yaw(float yawRadians)
     {
-        Rotate(yawRadians, 0.0f, 1.0f, 0.0f);
+        Rotate(yawRadians,  new Vector3(0.0f, 1.0f, 0.0f));
         yaw += RadToDeg(yawRadians);
-        Log.d("CAMERA", "yaw: " + Float.toString(yaw));
+        //Log.d("CAMERA", "yaw: " + Float.toString(yaw));
     }
 
     public void Roll(float rollRadians)
     {
-        Rotate(rollRadians, 0.0f, 0.0f, 1.0f);
+        Rotate(rollRadians, new Vector3(0.0f, 0.0f, 1.0f));
         roll += RadToDeg(rollRadians);
-        Log.d("CAMERA", "roll: " + Float.toString(roll));
+        //Log.d("CAMERA", "roll: " + Float.toString(roll));
     }
 
     public void Turn(float turnRadians)
@@ -62,58 +65,63 @@ public class Camera {
         Rotate(orientation);
     }
 
-    public void Rotate(float angleRadians, float x, float y, float z)
+    public void Rotate(float angleRadians, Vector3 axis)
     {
-        Quaternion q = new Quaternion(x, y, z, angleRadians);
+        Quaternion q = new Quaternion().angleAxis(angleRadians, axis);
         Rotate(q);
     }
 
     public  void Rotate(Quaternion q)
     {
+
         orientation = q.mul(orientation);
         PrintLog();
     }
 
     public Vector3 GetForward()
     {
+        Log.d("CAMERA", "orientation: " + Float.toString(orientation.x) + ", " + Float.toString(orientation.y) + ", " + Float.toString(orientation.z) + ", " + Float.toString(orientation.w));
         Quaternion q = orientation.conjugate();
-        //Log.d("CAMERA", "q: " + Float.toString(q.x) + ", " + Float.toString(q.y) + ", " + Float.toString(q.z));
-        q.mulInplace(new Quaternion(0.0f, 0.0f, -1.0f, 0.0f));
-        //Log.d("CAMERA", "getForward: " + Float.toString(q.x) + ", " + Float.toString(q.y) + ", " + Float.toString(q.z));
-        return new Vector3(q.x, q.y, q.z);
+        Log.d("CAMERA", "q: " + Float.toString(q.x) + ", " + Float.toString(q.y) + ", " + Float.toString(q.z));
+        Vector3 forward = q.mul(new Vector3(0.0f, 0.0f, -1.0f));
+        Log.d("CAMERA", "getForward: " + Float.toString(q.x) + ", " + Float.toString(q.y) + ", " + Float.toString(q.z));
+        return forward;
     }
 
     public Vector3 GetLeft()
     {
         Quaternion q = orientation.conjugate();
-        q.mulInplace(new Quaternion(-1.0f, 0.0f, 0.0f, 0.0f));
-        return new Vector3(q.x, q.y, q.z);
+        Vector3 left = q.mul(new Vector3(-1.0f, 0.0f, 0.0f));
+        return left;
     }
 
     public Vector3 GetUp()
     {
         Quaternion q = orientation.conjugate();
-        q.mulInplace(new Quaternion(0.0f, 1.0f, 0.0f, 0.0f));
-        return new Vector3(q.x, q.y, q.z);
+        Vector3 up = q.mul(new Vector3(-1.0f, 0.0f, 0.0f));
+        return up;
     }
 
     public void MoveForward(float movement)
     {
-
-        Vector3 temp = GetForward().mul(movement);
-        //Log.d("CAMERA", "temp: " + Float.toString(temp.getX()) + ", " + Float.toString(temp.getY()) + ", " + Float.toString(temp.getZ()));
-        position.add(temp);
-        //Log.d("CAMERA", "position: " + Float.toString(position.getX()) + ", " + Float.toString(position.getY()) + ", " + Float.toString(position.getZ()));
+        Vector3 forward = GetForward();
+        forward.mulInplace(movement);
+        position.addNoCopy(forward);
+        Log.d("CAMERA", "position: " + Float.toString(position.x) + ", " + Float.toString(position.y) + ", " + Float.toString(position.z));
     }
 
     public void MoveLeft(float movement)
     {
-        position.add(GetLeft().mul(movement));
+        Vector3 left = GetLeft();
+        left.mulInplace(movement);
+        position.addNoCopy(left);
     }
 
     public void MoveUp(float movement)
     {
-        position.add(GetUp().mul(movement));
+        Vector3 up = GetUp();
+        up.mulInplace(movement);
+        position.addNoCopy(up);
     }
 
     public Matrix4 GetViewMatrix()
@@ -180,7 +188,7 @@ public class Camera {
     {
         float[] matrix = GetViewMatrixAsArray();
         //Log.d("CameraVec", Float.toString(pitch) + ", " + Float.toString(yaw) + ", " + Float.toString(roll));
-        Log.d("CameraMatrix",
+        /*Log.d("CameraMatrix",
                 Float.toString(matrix[0]) + ", " +
                 Float.toString(matrix[1]) + ", " +
                 Float.toString(matrix[2]) + ", " +
@@ -197,6 +205,6 @@ public class Camera {
                 Float.toString(matrix[13]) + ", " +
                 Float.toString(matrix[14]) + ", " +
                 Float.toString(matrix[15]) + ", "
-        );
+        );*/
     }
 }

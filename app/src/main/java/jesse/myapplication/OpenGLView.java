@@ -48,15 +48,17 @@ public class OpenGLView extends GLSurfaceView{
         }
         else if (event.getAction() == MotionEvent.ACTION_MOVE)
         {
+
+
             if (rotateOrTranslate)
             {
-                mRenderer.camera.Yaw(mRenderer.camera.DegToRad((event.getX() - touchX)/20f));
-                mRenderer.camera.Pitch(mRenderer.camera.DegToRad((event.getY() - touchY)/20f));
+                mRenderer.camera.Roll(mRenderer.camera.DegToRad((event.getX() - touchX)/2f));
+                mRenderer.camera.Pitch(mRenderer.camera.DegToRad((event.getY() - touchY)/2f));
             }
             else
             {
-                mRenderer.camera.MoveLeft((event.getX() - touchX)/20f);
-                mRenderer.camera.MoveForward((event.getY() - touchY)/20f);
+                mRenderer.camera.Yaw(mRenderer.camera.DegToRad((event.getX() - touchX)/2f));
+                mRenderer.camera.MoveForward((event.getY() - touchY)/2f);
             }
 
 

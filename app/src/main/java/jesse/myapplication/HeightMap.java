@@ -31,13 +31,13 @@ public class HeightMap {
 
     public HeightMap()
     {
-        try {
+        /*try {
             final int floatsPerVertex = POSITION_DATA_SIZE_IN_ELEMENTS + NORMAL_DATA_SIZE_IN_ELEMENTS
                     + COLOR_DATA_SIZE_IN_ELEMENTS;
             final int xLength = SIZE_PER_SIDE;
             final int yLength = SIZE_PER_SIDE;
 
-            final float[] heightMapVertexData = new float[xLength * yLength * floatsPerVertex];
+            //final float[] heightMapVertexData = new float[xLength * yLength * floatsPerVertex];
 
             int offset = 0;
 
@@ -138,12 +138,12 @@ public class HeightMap {
                 GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
                 GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
             } else {
-                errorHandler.handleError(ErrorType.BUFFER_CREATION_ERROR, &quot;glGenBuffers&quot;);
+                //errorHandler.handleError(ErrorType.BUFFER_CREATION_ERROR, &quot;glGenBuffers&quot;);
             }
         } catch(Exception e)
         {
             e.printStackTrace();
-        }
+        }*/
 
     }
 
@@ -154,25 +154,25 @@ public class HeightMap {
     public void draw()
     {
 
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[0]);
+        /*GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[0]);
 
         // Bind Attributes
-        glEs20.glVertexAttribPointer(positionAttribute, POSITION_DATA_SIZE_IN_ELEMENTS, GLES20.GL_FLOAT,
+        GLES20.glVertexAttribPointer(positionAttribute, POSITION_DATA_SIZE_IN_ELEMENTS, GLES20.GL_FLOAT,
                 false, STRIDE, 0);
         GLES20.glEnableVertexAttribArray(positionAttribute);
 
-        glEs20.glVertexAttribPointer(normalAttribute, NORMAL_DATA_SIZE_IN_ELEMENTS, GLES20.GL_FLOAT,
+        GLES20.glVertexAttribPointer(normalAttribute, NORMAL_DATA_SIZE_IN_ELEMENTS, GLES20.GL_FLOAT,
                 false, STRIDE, POSITION_DATA_SIZE_IN_ELEMENTS * BYTES_PER_FLOAT);
         GLES20.glEnableVertexAttribArray(normalAttribute);
 
-        glEs20.glVertexAttribPointer(colorAttribute, COLOR_DATA_SIZE_IN_ELEMENTS, GLES20.GL_FLOAT,
+        GLES20.glVertexAttribPointer(colorAttribute, COLOR_DATA_SIZE_IN_ELEMENTS, GLES20.GL_FLOAT,
                 false, STRIDE, (POSITION_DATA_SIZE_IN_ELEMENTS + NORMAL_DATA_SIZE_IN_ELEMENTS)
                         * BYTES_PER_FLOAT);
         GLES20.glEnableVertexAttribArray(colorAttribute);
 
         // Draw
         GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, ibo[0]);
-        glEs20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, indexCount, GLES20.GL_UNSIGNED_SHORT, 0);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, indexCount, GLES20.GL_UNSIGNED_SHORT, 0);
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
         GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -183,6 +183,6 @@ public class HeightMap {
             diffuse = max(dot(v_Normal, lightVector), 0.0);
         } else {
             diffuse = max(dot(-v_Normal, lightVector), 0.0);
-        }
+        }*/
     }
 }

@@ -60,7 +60,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 
         //triangle = new Triangle(this);
         skybox = new Skybox(this, context, far);
-        camera = new Camera(0, 0, 3);
+        camera = new Camera(0, 0, 0, 0, 0, 0);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
         float left = ratio * bottom;
         float right = ratio * top;
         Matrix.frustumM(mProjectionMatrix, 0, left, right, bottom, top, near, far);
-        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0);
+        //Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0);
 
     }
 
@@ -87,18 +87,17 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
-        mViewMatrix = camera.GetInverseViewMatrixAsArray();
+        mViewMatrix = camera.GetViewMatrixAsArray();
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
         Matrix.setRotateM(mSkyboxRotationMatrix, 0, 0.0f, 0.0f, 1.0f, 0.0f);
-        Matrix.multiplyMM(skyboxScratch, 0, mMVPMatrix, 0, mSkyboxRotationMatrix, 0);
+        Matrix.multiplyMM(skyboxScratch, 0, mMVPMatrix, 0,  mSkyboxRotationMatrix, 0);
 
 //        long time = SystemClock.uptimeMillis() % 4000L;
 //        float angle = 0.090f * ((int) time);
 //        Matrix.setRotateM(mRotationMatrix, 0, angle, 0, 0, -1.0f);
 //
 //        Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
-
         skybox.draw(skyboxScratch);
     }
 

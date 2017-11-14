@@ -254,4 +254,34 @@ public class Quaternion {
         ret.w = this.w * scalar;
         return ret;
     }
+
+    public Vector3 mul (Vector3 vec)
+    {
+        Vector3 QuatVector = new Vector3(this.x, this.y, this.z);
+        Vector3 uv = QuatVector.cross(vec);
+        Vector3 uuv = QuatVector.cross(uv);
+        uv.mulInplace(this.w);
+        uv.addNoCopy(uuv);
+        uv.mulInplace(2);
+
+        return vec.add(uv);
+    }
+
+    public Quaternion angleAxis(float angle, Vector3 axis)
+    {
+        Quaternion result = new Quaternion();
+
+        float a = (float) Math.toRadians(angle);
+
+        float s = (float) Math.sin(a * 0.5f);
+
+        axis = axis.normalize();
+
+        result.x = axis.x * s;
+        result.y = axis.y * s;
+        result.z = axis.z * s;
+        result.w = (float) Math.cos(a * 0.5f);
+
+        return result;
+    }
 }
