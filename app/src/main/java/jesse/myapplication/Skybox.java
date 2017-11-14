@@ -12,6 +12,7 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import Units.Vector3;
 import util.ShaderHelper;
 import util.TextureHelper;
 
@@ -202,10 +203,10 @@ public class Skybox {
     private final int textureStride = COORDS_PER_TEXTURE * 4;
 
 
-    public Skybox(OpenGLRenderer renderer, Context context) {
+    public Skybox(OpenGLRenderer renderer, Context context, float zFar) {
 
         mRenderer = renderer;
-
+        newCubeCoordinates(boxCoords, zFar);
         vertexBuffer = allocateBuffer(boxCoords);
         //colourBuffer = allocateBuffer(colours);
         textureBuffer = allocateBuffer(textureCoords);
@@ -263,6 +264,16 @@ public class Skybox {
         fb.put(content);
         fb.position(0);
         return fb;
+    }
+
+    private void newCubeCoordinates(float[] boxCoords, float zFar)
+    {
+        float distance = (float)Math.sqrt(2 * (zFar * zFar)) - zFar;
+        Log.d("CUBE", Float.toString(distance));
+        for (int i = 0; i < boxCoords.length; i++)
+        {
+            boxCoords[i] = (boxCoords[i] > 0 ? distance : -distance);
+        }
     }
 
 }

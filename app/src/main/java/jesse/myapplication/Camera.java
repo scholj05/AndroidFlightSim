@@ -71,14 +71,15 @@ public class Camera {
     public  void Rotate(Quaternion q)
     {
         orientation = q.mul(orientation);
+        PrintLog();
     }
 
     public Vector3 GetForward()
     {
         Quaternion q = orientation.conjugate();
-        Log.d("CAMERA", "q: " + Float.toString(q.x) + ", " + Float.toString(q.y) + ", " + Float.toString(q.z));
+        //Log.d("CAMERA", "q: " + Float.toString(q.x) + ", " + Float.toString(q.y) + ", " + Float.toString(q.z));
         q.mulInplace(new Quaternion(0.0f, 0.0f, -1.0f, 0.0f));
-        Log.d("CAMERA", "getForward: " + Float.toString(q.x) + ", " + Float.toString(q.y) + ", " + Float.toString(q.z));
+        //Log.d("CAMERA", "getForward: " + Float.toString(q.x) + ", " + Float.toString(q.y) + ", " + Float.toString(q.z));
         return new Vector3(q.x, q.y, q.z);
     }
 
@@ -100,9 +101,9 @@ public class Camera {
     {
 
         Vector3 temp = GetForward().mul(movement);
-        Log.d("CAMERA", "temp: " + Float.toString(temp.getX()) + ", " + Float.toString(temp.getY()) + ", " + Float.toString(temp.getZ()));
-        position.add(GetForward().mul(movement));
-        Log.d("CAMERA", "position: " + Float.toString(position.getX()) + ", " + Float.toString(position.getY()) + ", " + Float.toString(position.getZ()));
+        //Log.d("CAMERA", "temp: " + Float.toString(temp.getX()) + ", " + Float.toString(temp.getY()) + ", " + Float.toString(temp.getZ()));
+        position.add(temp);
+        //Log.d("CAMERA", "position: " + Float.toString(position.getX()) + ", " + Float.toString(position.getY()) + ", " + Float.toString(position.getZ()));
     }
 
     public void MoveLeft(float movement)
@@ -178,24 +179,24 @@ public class Camera {
     public void PrintLog()
     {
         float[] matrix = GetViewMatrixAsArray();
-        Log.d("CameraVec", Float.toString(pitch) + ", " + Float.toString(yaw) + ", " + Float.toString(roll));
-        /*Log.d("CameraMatrix",
+        //Log.d("CameraVec", Float.toString(pitch) + ", " + Float.toString(yaw) + ", " + Float.toString(roll));
+        Log.d("CameraMatrix",
                 Float.toString(matrix[0]) + ", " +
                 Float.toString(matrix[1]) + ", " +
                 Float.toString(matrix[2]) + ", " +
-                Float.toString(matrix[3]) + ", " +
+                Float.toString(matrix[3]) + ", \n" +
                 Float.toString(matrix[4]) + ", " +
                 Float.toString(matrix[5]) + ", " +
                 Float.toString(matrix[6]) + ", " +
-                Float.toString(matrix[7]) + ", " +
+                Float.toString(matrix[7]) + ", \n" +
                 Float.toString(matrix[8]) + ", " +
                 Float.toString(matrix[9]) + ", " +
                 Float.toString(matrix[10]) + ", " +
-                Float.toString(matrix[11]) + ", " +
+                Float.toString(matrix[11]) + ", \n" +
                 Float.toString(matrix[12]) + ", " +
                 Float.toString(matrix[13]) + ", " +
                 Float.toString(matrix[14]) + ", " +
                 Float.toString(matrix[15]) + ", "
-        );*/
+        );
     }
 }

@@ -40,6 +40,10 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
     private final float[] mRotationMatrix = new float[16];
     private final float[] mSkyboxRotationMatrix = new float[16];
 
+    private static float fov = 90.0f;
+    private static float near = 0.1f;
+    private static float far = 1000.0f;
+
 
     public OpenGLRenderer(Context context)
     {
@@ -55,7 +59,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
         GLES20.glDisable(GLES20.GL_BLEND);
 
         //triangle = new Triangle(this);
-        skybox = new Skybox(this, context);
+        skybox = new Skybox(this, context, far);
         camera = new Camera(0, 0, 3);
     }
 
@@ -66,9 +70,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 
         GLES20.glViewport(0, 0, width, height);
         float ratio = (float) width / height;
-        float fov = 90.0f;
-        float near = 0.1f;
-        float far = 1000.0f;
+
         float top = (float) Math.tan(fov * Math.PI / 360.0f) * near;
         float bottom = -top;
         float left = ratio * bottom;
