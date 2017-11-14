@@ -39,18 +39,21 @@ public class Camera {
     {
         Rotate(pitchRadians, 1.0f, 0.0f, 0.0f);
         pitch += RadToDeg(pitchRadians);
+        Log.d("CAMERA", "pitch: " + Float.toString(pitch));
     }
 
     public void Yaw(float yawRadians)
     {
         Rotate(yawRadians, 0.0f, 1.0f, 0.0f);
         yaw += RadToDeg(yawRadians);
+        Log.d("CAMERA", "yaw: " + Float.toString(yaw));
     }
 
     public void Roll(float rollRadians)
     {
         Rotate(rollRadians, 0.0f, 0.0f, 1.0f);
         roll += RadToDeg(rollRadians);
+        Log.d("CAMERA", "roll: " + Float.toString(roll));
     }
 
     public void Turn(float turnRadians)
@@ -73,7 +76,9 @@ public class Camera {
     public Vector3 GetForward()
     {
         Quaternion q = orientation.conjugate();
+        Log.d("CAMERA", "q: " + Float.toString(q.x) + ", " + Float.toString(q.y) + ", " + Float.toString(q.z));
         q.mulInplace(new Quaternion(0.0f, 0.0f, -1.0f, 0.0f));
+        Log.d("CAMERA", "getForward: " + Float.toString(q.x) + ", " + Float.toString(q.y) + ", " + Float.toString(q.z));
         return new Vector3(q.x, q.y, q.z);
     }
 
@@ -93,7 +98,11 @@ public class Camera {
 
     public void MoveForward(float movement)
     {
+
+        Vector3 temp = GetForward().mul(movement);
+        Log.d("CAMERA", "temp: " + Float.toString(temp.getX()) + ", " + Float.toString(temp.getY()) + ", " + Float.toString(temp.getZ()));
         position.add(GetForward().mul(movement));
+        Log.d("CAMERA", "position: " + Float.toString(position.getX()) + ", " + Float.toString(position.getY()) + ", " + Float.toString(position.getZ()));
     }
 
     public void MoveLeft(float movement)
@@ -155,12 +164,12 @@ public class Camera {
         return new Vector3(RadToDeg(pitch), RadToDeg(yaw), RadToDeg(roll));
     }
 
-    private float RadToDeg(float radian)
+    public float RadToDeg(float radian)
     {
         return radian * (180 / (float)Math.PI);
     }
 
-    private float DegToRad(float degree)
+    public float DegToRad(float degree)
     {
         return degree * ((float)Math.PI / 180);
     }

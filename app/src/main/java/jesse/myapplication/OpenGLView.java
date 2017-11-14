@@ -7,6 +7,7 @@ import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MotionEvent;
 
@@ -19,7 +20,8 @@ public class OpenGLView extends GLSurfaceView{
     OpenGLRenderer mRenderer;// = new OpenGLRenderer();
     Camera camera;// = mRenderer.GetCamera();
     GameLoop mGameLoop;
-    float lastX = 0, lastY = 0;
+    float touchX = 0, touchY = 0;
+    boolean rotateOrTranslate;
 
     public OpenGLView(Context context) {
         super(context);
@@ -36,29 +38,56 @@ public class OpenGLView extends GLSurfaceView{
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
-        float newX = event.getX();
-        float newY = event.getY();
-        switch (event.getAction())
+
+        if (event.getAction() == MotionEvent.ACTION_DOWN)
         {
-            case MotionEvent.ACTION_DOWN:
-                return true;
-            case MotionEvent.ACTION_MOVE:
-                float deltaX = newX - lastX;
-                float deltaY = newY - lastY;
-                mRenderer.camera.Yaw(deltaX / 500);
-                mRenderer.camera.Pitch(deltaY / 500);
-                mRenderer.camera.PrintLog();
-                //Log.d("TOUCH", "eyeZ " + Float.toString(mRenderer.eyeZ));
-                //Log.d("TOUCH", "upX " + Float.toString(mRenderer.upX));
-                lastX = newX;
-                lastY = newY;
+            touchX = event.getX();
+            touchY = event.getY();
 
-                return true;
-            case MotionEvent.ACTION_UP:
-
-                return true;
+            rotateOrTranslate = touchX > mRenderer.screenX / 2;
         }
+        else if (event.getAction() == MotionEvent.ACTION_MOVE)
+        {
+            if (rotateOrTranslate)
+            {
+                mRenderer.camera.Yaw(mRenderer.camera.DegToRad((event.getX() - touchX)/20f));
+                mRenderer.camera.Pitch(mRenderer.camera.DegToRad((event.getY() - touchY)/20f));
+            }
+            else
+            {
+                mRenderer.camera.MoveLeft((event.getX() - touchX)/20f);
+                mRenderer.camera.MoveForward((event.getY() - touchY)/20f);
+            }
 
-        return super.onTouchEvent(event);
+
+            touchX = event.getX();
+            touchY = event.getY();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent evt) {
+        switch(keyCode) {
+            case KeyEvent.KEYCODE_DPAD_LEFT:   // Decrease Y-rotational speed
+                mRenderer.camera.Yaw(-1);
+                break;
+            case KeyEvent.KEYCODE_DPAD_RIGHT:  // Increase Y-rotational speed
+                mRenderer.camera.Yaw(1);
+                break;
+            case KeyEvent.KEYCODE_DPAD_UP:     // Decrease X-rotational speed
+                mRenderer.camera.Pitch(1);
+                break;
+            case KeyEvent.KEYCODE_DPAD_DOWN:   // Increase X-rotational speed
+                mRenderer.camera.Pitch(-1);
+                break;
+            case KeyEvent.KEYCODE_W:           // Zoom out (decrease z)
+                mRenderer.camera.MoveForward(0.1f);
+                break;
+            case KeyEvent.KEYCODE_S:           // Zoom in (increase z)
+                mRenderer.camera.MoveForward(-0.1f);
+                break;
+        }
+        return true;  // Event handled
     }
 }

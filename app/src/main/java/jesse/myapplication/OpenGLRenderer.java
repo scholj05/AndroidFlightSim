@@ -12,6 +12,7 @@ import android.util.Log;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import Units.Matrix4;
 import util.RawResourceReader;
 import util.ShaderHelper;
 
@@ -32,22 +33,13 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 
     public Camera camera;
 
-    // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
+    public int screenX, screenY;
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjectionMatrix = new float[16];
     private float[] mViewMatrix = new float[16];
     private final float[] mRotationMatrix = new float[16];
     private final float[] mSkyboxRotationMatrix = new float[16];
 
-    public float eyeX = 0.0f;
-    public float eyeY = 0.0f;
-    public float eyeZ = 1.5f;
-    public float lookX = 0.0f;
-    public float lookY = 0.0f;
-    public float lookZ = -5.0f;
-    public float upX = 0.0f;
-    public float upY = 1.0f;
-    public float upZ = 0.0f;
 
     public OpenGLRenderer(Context context)
     {
@@ -57,9 +49,10 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
     @Override
     public void onSurfaceCreated(GL10 GL10, EGLConfig eglConfig) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f); //black wipe
-
+        GLES20.glClearDepthf(1.0f);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         GLES20.glDepthFunc(GLES20.GL_LEQUAL);
+        GLES20.glDisable(GLES20.GL_BLEND);
 
         //triangle = new Triangle(this);
         skybox = new Skybox(this, context);
@@ -68,9 +61,11 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 
     @Override
     public void onSurfaceChanged(GL10 GL10, int width, int height) {
+        screenX = width;
+        screenY = height;
+
         GLES20.glViewport(0, 0, width, height);
         float ratio = (float) width / height;
-
         float fov = 90.0f;
         float near = 0.1f;
         float far = 1000.0f;
@@ -79,6 +74,8 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
         float left = ratio * bottom;
         float right = ratio * top;
         Matrix.frustumM(mProjectionMatrix, 0, left, right, bottom, top, near, far);
+        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0);
+
     }
 
     @Override
@@ -88,22 +85,18 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
-        mViewMatrix = camera.GetViewMatrixAsArray();
-
-        //Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, lookX, lookY, lookZ, upX, upY, upZ);
-
+        mViewMatrix = camera.GetInverseViewMatrixAsArray();
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
-        Matrix.setRotateM(mSkyboxRotationMatrix, 0, eyeY, 0.0f, 1.0f, 0.0f);
+        Matrix.setRotateM(mSkyboxRotationMatrix, 0, 0.0f, 0.0f, 1.0f, 0.0f);
         Matrix.multiplyMM(skyboxScratch, 0, mMVPMatrix, 0, mSkyboxRotationMatrix, 0);
 
-        long time = SystemClock.uptimeMillis() % 4000L;
-        float angle = 0.090f * ((int) time);
-        Matrix.setRotateM(mRotationMatrix, 0, angle, 0, 0, -1.0f);
+//        long time = SystemClock.uptimeMillis() % 4000L;
+//        float angle = 0.090f * ((int) time);
+//        Matrix.setRotateM(mRotationMatrix, 0, angle, 0, 0, -1.0f);
+//
+//        Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
 
-        Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
-
-        //triangle.draw(scratch);
         skybox.draw(skyboxScratch);
     }
 
