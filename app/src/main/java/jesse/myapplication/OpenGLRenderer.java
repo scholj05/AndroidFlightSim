@@ -13,6 +13,8 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import Units.Matrix4;
+import Units.Vector2;
+import Units.Vector3;
 import util.RawResourceReader;
 import util.ShaderHelper;
 
@@ -44,6 +46,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
     private static float near = 0.1f;
     private static float far = 1000.0f;
 
+    private HeightMap heightMap;
 
     public OpenGLRenderer(Context context)
     {
@@ -61,6 +64,13 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
         //triangle = new Triangle(this);
         skybox = new Skybox(this, context, far);
         camera = new Camera(0, 0, 0, 0, 0, 0);
+
+        heightMap = new HeightMap(this, context);
+
+        Vector3 startPos = new Vector3(0, 0, 0);
+        Vector2 tileSize = new Vector2(100, 100);
+        int colCount = 128, rowCount = 128, minHeight = 0, maxHeight = 1000;
+        heightMap.Generate(startPos, tileSize, colCount, rowCount, minHeight, maxHeight);
     }
 
     @Override
@@ -76,7 +86,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
         float left = ratio * bottom;
         float right = ratio * top;
         Matrix.frustumM(mProjectionMatrix, 0, left, right, bottom, top, near, far);
-        //Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0);
+        Matrix.setLookAtM(mViewMatrix, 0, 0, 5, -0.5f, 0, -5, 5, 0, 0, 1);
 
     }
 
@@ -98,7 +108,8 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 //        Matrix.setRotateM(mRotationMatrix, 0, angle, 0, 0, -1.0f);
 //
 //        Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
-        skybox.draw(skyboxScratch);
+        //skybox.draw(skyboxScratch);
+        heightMap.draw();
     }
 
     public static int loadShader(int type, String ShaderCode)

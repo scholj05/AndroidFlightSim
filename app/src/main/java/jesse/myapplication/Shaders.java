@@ -43,12 +43,12 @@ public class Shaders {
                     " \n" +
                     "attribute vec4 aPosition;\n" +
                     "attribute vec4 aColour;\n" +
-    //              "attribute vec3 aNormal;\n" +
+                    "attribute vec3 aNormal;\n" +
                     "attribute vec2 aTexCoordinate;\n" +
                     " \n" +
                     "varying vec3 vPosition;\n" +
                     "varying vec4 vColour;\n" +
-    //              "varying vec3 vNormal;\n" +
+                    "varying vec3 vNormal;\n" +
                     "varying vec2 vTexCoordinate;\n" +
                     " \n" +
                     "void main()\n" +
@@ -56,18 +56,18 @@ public class Shaders {
                     "    vPosition = vec3(uMVMatrix * aPosition);\n" +
                     "    vColour = aColour;\n" +
                     "    vTexCoordinate = aTexCoordinate;\n" +
-    //              "    vNormal = vec3(uMVMatrix * vec4(aNormal, 0.0));\n" +
+                    "    vNormal = vec3(uMVMatrix * vec4(aNormal, 0.0));\n" +
                     "    gl_Position = uMVPMatrix * aPosition;\n" +
                     "}";
 
     public static final String TEXTURE_FRAGMENT_SHADER_BROKEN =
                     "precision mediump float;\n" +
-//                    "uniform vec3 u_LightPos;\n" +
+                      "uniform vec3 u_LightPos;\n" +
                     "uniform sampler2D uTexture;\n" +
                     " \n" +
                     "varying vec3 vPosition;\n" +
                     "varying vec4 vColour;\n" +
-//                    "varying vec3 vNormal;\n" +
+                    "varying vec3 vNormal;\n" +
                     "varying vec2 vTexCoordinate;\n" +
                     " \n" +
                     "void main()\n" +
@@ -80,6 +80,7 @@ public class Shaders {
 //                    "    gl_FragColor = (vColour * diffuse * texture2D(uTexture, vTexCoordinate));\n" +
                       "    gl_FragColor = (vColour * texture2D(uTexture, vTexCoordinate));\n" +
                     "  }";
+
 
 
     public static final String TEXTURE_VERTEX_SHADER =
@@ -105,6 +106,44 @@ public class Shaders {
                     "{" +
                         "vTexCoords = aTexCoordinate;" +
                         "gl_Position = uMVPMatrix * aPosition;" +
+                    "}";
+
+    public static final String per_pixel_vertex_shader_no_text =
+                    "uniform mat4 u_MVPMatrix;" +
+                    "uniform mat4 u_MVMatrix;" +
+                    "attribute vec4 a_Position;" +
+                    "attribute vec4 a_Color;" +
+                    "attribute vec3 a_Normal;" +
+                    "varying vec3 v_Position;" +
+                    "varying vec4 v_Color;" +
+                    "varying vec3 v_Normal;" +
+                    "void main()" +
+                    "{" +
+                        "v_Position = vec3(u_MVMatrix * a_Position);" +
+                        "v_Color = a_Color;" +
+                        "v_Normal = vec3(u_MVMatrix * vec4(a_Normal, 0.0));" +
+                        "gl_Position = u_MVPMatrix * a_Position;" +
+                    "} ";
+
+    public static final String per_pixel_fragment_shader_no_tex =
+                    "precision mediump float;" +
+                    "uniform vec3 u_LightPos;" +
+                    "varying vec3 v_Position;" +
+                    "varying vec4 v_Color;" +
+                    "varying vec3 v_Normal;" +
+                    "void main()" +
+                    "{" +
+                        "float distance = length(u_LightPos - v_Position);" +
+                        "vec3 lightVector = normalize(u_LightPos - v_Position);" +
+                        "float diffuse;" +
+                        "if (gl_FrontFacing) {" +
+                            "diffuse = max(dot(v_Normal, lightVector), 0.0);" +
+                        "} else {" +
+                            "diffuse = max(dot(-v_Normal, lightVector), 0.0);" +
+                        "}" +
+                        "diffuse = diffuse * (1.0 / (1.0 + (0.10 * distance)));" +
+                        "diffuse = diffuse + 0.3;" +
+                        "gl_FragColor = (v_Color * diffuse);" +
                     "}";
 
     public static final String TEXTURE_CUBE_MAP_FRAGMENT_SHADER =
