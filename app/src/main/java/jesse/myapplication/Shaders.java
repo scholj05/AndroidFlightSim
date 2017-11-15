@@ -43,12 +43,12 @@ public class Shaders {
                     " \n" +
                     "attribute vec4 aPosition;\n" +
                     "attribute vec4 aColour;\n" +
-    //              "attribute vec3 aNormal;\n" +
+                    "attribute vec3 aNormal;\n" +
                     "attribute vec2 aTexCoordinate;\n" +
                     " \n" +
                     "varying vec3 vPosition;\n" +
                     "varying vec4 vColour;\n" +
-    //              "varying vec3 vNormal;\n" +
+                    "varying vec3 vNormal;\n" +
                     "varying vec2 vTexCoordinate;\n" +
                     " \n" +
                     "void main()\n" +
@@ -56,7 +56,7 @@ public class Shaders {
                     "    vPosition = vec3(uMVMatrix * aPosition);\n" +
                     "    vColour = aColour;\n" +
                     "    vTexCoordinate = aTexCoordinate;\n" +
-    //              "    vNormal = vec3(uMVMatrix * vec4(aNormal, 0.0));\n" +
+                    "    vNormal = vec3(uMVMatrix * vec4(aNormal, 0.0));\n" +
                     "    gl_Position = uMVPMatrix * aPosition;\n" +
                     "}";
 

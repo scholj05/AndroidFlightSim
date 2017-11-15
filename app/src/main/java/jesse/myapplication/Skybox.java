@@ -230,10 +230,11 @@ public class Skybox {
 
     }
 
-    public void draw(float[] mvpMatrix)
+    public void draw(float[] viewMatrix, float[] projectionMatrix)
     {
         GLES20.glUseProgram(program);
 
+        Matrix.MultiplyMM(mMVMatrix, 0, viewMatrix, 0, modelMatrix);
 
         GLES20.glVertexAttribPointer(positionHandle, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, vertexStride, vertexBuffer);
         GLES20.glEnableVertexAttribArray(positionHandle);
