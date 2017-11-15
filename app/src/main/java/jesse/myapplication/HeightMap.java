@@ -65,8 +65,33 @@ public class HeightMap {
     private GLES20 glEs20;
 
     private static OpenGLRenderer mRenderer;
-
     Context context;
+
+
+    /**
+     * Store the model matrix. This matrix is used to move models from object
+     * space (where each model can be thought of being located at the center of
+     * the universe) to world space.
+     */
+    private final float[] modelMatrix = new float[16];
+
+    /**
+     * Allocate storage for the final combined matrix. This will be passed into
+     * the shader program.
+     */
+    private final float[] mvpMatrix = new float[16];
+
+    /** Additional matrices. */
+    private final float[] accumulatedRotation = new float[16];
+    private final float[] currentRotation = new float[16];
+    private final float[] lightModelMatrix = new float[16];
+    private final float[] temporaryMatrix = new float[16];
+
+    /** Retain the most recent delta for touch events. */
+    // These still work without volatile, but refreshes are not guaranteed to
+    // happen.
+    public volatile float deltaX;
+    public volatile float deltaY;
 
     public HeightMap(OpenGLRenderer renderer, Context context)
     {
@@ -228,6 +253,48 @@ public class HeightMap {
     public void draw()
     {
         GLES20.glUseProgram(program);
+
+        // Draw the heightmap.
+        // Translate the heightmap into the screen.
+        Matrix.setIdentityM(modelMatrix, 0);
+        Matrix.translateM(modelMatrix, 0, 0.0f, 0.0f, -12f);
+
+        // Set a matrix that contains the current rotation.
+        Matrix.setIdentityM(currentRotation, 0);
+        Matrix.rotateM(currentRotation, 0, deltaX, 0.0f, 1.0f, 0.0f);
+        Matrix.rotateM(currentRotation, 0, deltaY, 1.0f, 0.0f, 0.0f);
+        deltaX = 0.0f;
+        deltaY = 0.0f;
+
+        // Multiply the current rotation by the accumulated rotation, and then
+        // set the accumulated rotation to the result.
+        Matrix.multiplyMM(temporaryMatrix, 0, currentRotation, 0, accumulatedRotation, 0);
+        System.arraycopy(temporaryMatrix, 0, accumulatedRotation, 0, 16);
+
+        // Rotate the cube taking the overall rotation into account.
+        Matrix.multiplyMM(temporaryMatrix, 0, modelMatrix, 0, accumulatedRotation, 0);
+        System.arraycopy(temporaryMatrix, 0, modelMatrix, 0, 16);
+
+        // This multiplies the view matrix by the model matrix, and stores
+        // the result in the MVP matrix
+        // (which currently contains model * view).
+        Matrix.multiplyMM(mvpMatrix, 0, viewMatrix, 0, modelMatrix, 0);
+
+        // Pass in the modelview matrix.
+        GLES20.glUniformMatrix4fv(mvMatrixUniform, 1, false, mvpMatrix, 0);
+
+        // This multiplies the modelview matrix by the projection matrix,
+        // and stores the result in the MVP matrix
+        // (which now contains model * view * projection).
+        Matrix.multiplyMM(temporaryMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
+        System.arraycopy(temporaryMatrix, 0, mvpMatrix, 0, 16);
+
+        // Pass in the combined matrix.
+        GLES20.glUniformMatrix4fv(mvpMatrixUniform, 1, false, mvpMatrix, 0);
+
+        // Pass in the light position in eye space.
+        //GLES20.glUniform3f(lightPosUniform, lightPosInEyeSpace[0], lightPosInEyeSpace[1], lightPosInEyeSpace[2]);
+
 
         if (vbo[0] > 0 && ibo[0] > 0) {
             GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[0]);
