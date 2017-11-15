@@ -220,7 +220,7 @@ public class Skybox {
         GLES20.glAttachShader(program, fragmentShader);
         GLES20.glLinkProgram(program);
 
-        positionHandle = GLES20.glGetAttribLocation(program, "aPosition");
+        positionHandle = GLES20.glGetAttribLocation(program, "vPosition");
         textureUniformHandle = GLES20.glGetUniformLocation(program, "uTexture");
         mRenderer.checkGLError("glGetUniformLocation");
         textureCoordHandle = GLES20.glGetAttribLocation(program, "aTexCoordinate");

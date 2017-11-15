@@ -97,14 +97,14 @@ public class Shaders {
                     "}";
 
     public static final String TEXTURE_CUBE_MAP_VERTEX_SHADER =
-                    "attribute vec4 aPosition;" +
+                    "attribute vec4 vPosition;" +
                     "uniform mat4 uMVPMatrix;" +
                     "varying vec3 vTexCoords;" +
                     "attribute vec3 aTexCoordinate;" +
                     "void main()" +
                     "{" +
                         "vTexCoords = aTexCoordinate;" +
-                        "gl_Position = uMVPMatrix * aPosition;" +
+                        "gl_Position = uMVPMatrix * vPosition;" +
                     "}";
 
     public static final String TEXTURE_CUBE_MAP_FRAGMENT_SHADER =
