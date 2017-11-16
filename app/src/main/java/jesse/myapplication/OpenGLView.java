@@ -18,7 +18,7 @@ import android.view.MotionEvent;
 public class OpenGLView extends GLSurfaceView{
 
     OpenGLRenderer mRenderer;// = new OpenGLRenderer();
-    NewCamera camera;// = mRenderer.GetCamera();
+    CameraController camera;// = mRenderer.GetCamera();
     GameLoop mGameLoop;
     float touchX = 0, touchY = 0;
     boolean rotateOrTranslate;
@@ -27,7 +27,7 @@ public class OpenGLView extends GLSurfaceView{
         super(context);
         setEGLContextClientVersion(2);
         mRenderer = new OpenGLRenderer(context);
-        camera = mRenderer.GetCamera();
+        camera = new CameraController(0);
         setRenderer(mRenderer);
         setRenderMode(RENDERMODE_WHEN_DIRTY);
 
@@ -52,17 +52,13 @@ public class OpenGLView extends GLSurfaceView{
 
             if (rotateOrTranslate)
             {
-                mRenderer.camera.roll(mRenderer.camera.degToRad((event.getX() - touchX)/1f));
-                mRenderer.camera.pitch(mRenderer.camera.degToRad((event.getY() - touchY)/1f));
-                //mRenderer.yaw += mRenderer.camera.DegToRad((event.getX() - touchX)/2f);
-               // mRenderer.pitch += mRenderer.camera.DegToRad((event.getY() - touchY)/2f);
+                camera.updateRoll((event.getX() - touchX) / 100f);
+                camera.updatePitch((event.getY() - touchY) / 100f);
             }
             else
             {
-                mRenderer.camera.yaw(mRenderer.camera.degToRad((event.getX() - touchX)/1f));
-                mRenderer.camera.translate(0.0f, 0.0f, (event.getY() - touchY)/1f);
-                //mRenderer.roll += mRenderer.camera.DegToRad((event.getX() - touchX)/2f);
-                //mRenderer.eyeZ += (event.getY() - touchY)/20f;
+               camera.updateYaw((event.getX() - touchX) / 100f);
+               camera.updateFlightSpeed((event.getY() - touchY) / 100f);
             }
 
 
@@ -96,4 +92,10 @@ public class OpenGLView extends GLSurfaceView{
         }
         return true;  // Event handled
     }
+
+    public CameraController getCamera()
+    {
+        return camera;
+    }
+
 }

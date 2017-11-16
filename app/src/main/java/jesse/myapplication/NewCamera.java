@@ -24,6 +24,8 @@ public class NewCamera {
         pitch(rotX);
         yaw(rotY);
         roll(rotZ);
+        CameraController.setCamera(this);
+
     }
 
     public Vector3 position()
@@ -69,7 +71,8 @@ public class NewCamera {
 
     public void rotate(float angle, Vector3 axis)
     {
-        mOrientation = mOrientation.mul(mOrientation.angleAxis(angle, mOrientation.mul(axis)));
+        Quaternion rotation = Quaternion.angleAxis(angle, axis);
+        mOrientation = rotation.mul(mOrientation);//mOrientation.mul(mOrientation.angleAxis(angle, mOrientation.mul(axis)));
     }
 
     public void rotate(float angle, float x, float y, float z)
@@ -79,17 +82,17 @@ public class NewCamera {
 
     public void pitch(float angle)
     {
-        rotate(angle, 1.0f, 0.0f, 0.0f);
+        rotate(degToRad(angle), 1.0f, 0.0f, 0.0f);
     }
 
     public void yaw(float angle)
     {
-        rotate(angle, 0.0f, 1.0f, 0.0f);
+        rotate(degToRad(angle), 0.0f, 1.0f, 0.0f);
     }
 
     public void roll(float angle)
     {
-        rotate(angle, 0.0f, 0.0f, 1.0f);
+        rotate(degToRad(angle), 0.0f, 0.0f, 1.0f);
     }
 
     public float radToDeg(float radian)

@@ -33,7 +33,9 @@ public class GameLoop extends Thread
         {
             //Log.d("TAG", "GAMELOOP");
             openGLView.requestRender();
-            heightMap.draw();
+            if (openGLView.getCamera() != null)
+                openGLView.getCamera().update();
+                //heightMap.draw();
 
             try
             {

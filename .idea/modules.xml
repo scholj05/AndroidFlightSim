@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AndroidFlightSim.iml" filepath="$PROJECT_DIR$/AndroidFlightSim.iml" />
       <module fileurl="file://C:\Users\Jesse\AndroidStudioProjects\FlightSim\AndroidFlightSim\.idea\modules\AndroidFlightSim.iml" filepath="C:\Users\Jesse\AndroidStudioProjects\FlightSim\AndroidFlightSim\.idea\modules\AndroidFlightSim.iml" />
+      <module fileurl="file://C:\Git\Android\AndroidFlightSim\AndroidFlightSim.iml" filepath="C:\Git\Android\AndroidFlightSim\AndroidFlightSim.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
