@@ -18,7 +18,7 @@ import android.view.MotionEvent;
 public class OpenGLView extends GLSurfaceView{
 
     OpenGLRenderer mRenderer;// = new OpenGLRenderer();
-    Camera camera;// = mRenderer.GetCamera();
+    CameraController camera;// = mRenderer.GetCamera();
     GameLoop mGameLoop;
     float touchX = 0, touchY = 0;
     boolean rotateOrTranslate;
@@ -27,7 +27,7 @@ public class OpenGLView extends GLSurfaceView{
         super(context);
         setEGLContextClientVersion(2);
         mRenderer = new OpenGLRenderer(context);
-        camera = mRenderer.GetCamera();
+        camera = new CameraController(0);
         setRenderer(mRenderer);
         setRenderMode(RENDERMODE_WHEN_DIRTY);
 
@@ -52,13 +52,13 @@ public class OpenGLView extends GLSurfaceView{
 
             if (rotateOrTranslate)
             {
-                mRenderer.camera.Roll(mRenderer.camera.DegToRad((event.getX() - touchX)/2f));
-                mRenderer.camera.Pitch(mRenderer.camera.DegToRad((event.getY() - touchY)/2f));
+                camera.updateRoll((event.getX() - touchX) / 100f);
+                camera.updatePitch((event.getY() - touchY) / 100f);
             }
             else
             {
-                mRenderer.camera.Yaw(mRenderer.camera.DegToRad((event.getX() - touchX)/2f));
-                mRenderer.camera.MoveForward((event.getY() - touchY)/2f);
+               camera.updateYaw((event.getX() - touchX) / 100f);
+               camera.updateFlightSpeed((event.getY() - touchY) / 100f);
             }
 
 
@@ -72,24 +72,30 @@ public class OpenGLView extends GLSurfaceView{
     public boolean onKeyUp(int keyCode, KeyEvent evt) {
         switch(keyCode) {
             case KeyEvent.KEYCODE_DPAD_LEFT:   // Decrease Y-rotational speed
-                mRenderer.camera.Yaw(-1);
+                mRenderer.camera.yaw(-1);
                 break;
             case KeyEvent.KEYCODE_DPAD_RIGHT:  // Increase Y-rotational speed
-                mRenderer.camera.Yaw(1);
+                mRenderer.camera.yaw(1);
                 break;
             case KeyEvent.KEYCODE_DPAD_UP:     // Decrease X-rotational speed
-                mRenderer.camera.Pitch(1);
+                mRenderer.camera.pitch(1);
                 break;
             case KeyEvent.KEYCODE_DPAD_DOWN:   // Increase X-rotational speed
-                mRenderer.camera.Pitch(-1);
+                mRenderer.camera.pitch(-1);
                 break;
             case KeyEvent.KEYCODE_W:           // Zoom out (decrease z)
-                mRenderer.camera.MoveForward(0.1f);
+                mRenderer.camera.translate(0, 0, 0.1f);
                 break;
             case KeyEvent.KEYCODE_S:           // Zoom in (increase z)
-                mRenderer.camera.MoveForward(-0.1f);
+                mRenderer.camera.translate(0, 0, -0.1f);
                 break;
         }
         return true;  // Event handled
     }
+
+    public CameraController getCamera()
+    {
+        return camera;
+    }
+
 }

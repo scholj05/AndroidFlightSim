@@ -93,49 +93,6 @@ public class Skybox {
             -1.0f, 1.0f, -1.0f,     // 0
 
     };
-    float colours[] = {
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-
-            0.0f, 1.0f, 0.0f, 1.0f,
-            0.0f, 1.0f, 0.0f, 1.0f,
-            0.0f, 1.0f, 0.0f, 1.0f,
-            0.0f, 1.0f, 0.0f, 1.0f,
-            0.0f, 1.0f, 0.0f, 1.0f,
-            0.0f, 1.0f, 0.0f, 1.0f,
-
-            1.0f, 1.0f, 0.0f, 1.0f,
-            1.0f, 1.0f, 0.0f, 1.0f,
-            1.0f, 1.0f, 0.0f, 1.0f,
-            1.0f, 1.0f, 0.0f, 1.0f,
-            1.0f, 1.0f, 0.0f, 1.0f,
-            1.0f, 1.0f, 0.0f, 1.0f,
-
-            1.0f, 0.0f, 1.0f, 1.0f,
-            1.0f, 0.0f, 1.0f, 1.0f,
-            1.0f, 0.0f, 1.0f, 1.0f,
-            1.0f, 0.0f, 1.0f, 1.0f,
-            1.0f, 0.0f, 1.0f, 1.0f,
-            1.0f, 0.0f, 1.0f, 1.0f,
-
-            0.0f, 0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 0.0f, 1.0f,
-
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-    };
 
     final float[] textureCoords = {
 
@@ -188,10 +145,15 @@ public class Skybox {
             1.0f, -1.0f, -1.0f,     // 2
     };
 
+    private float[] modelMatrix = new float[16];
+    private float[] tempMatrix = new float[16];
+    private float[] mvMatrix = new float[16];
+    private float[] mvpMatrix = new float[16];
+
     private final int program;
 
     private int positionHandle;
-    private int colourHandle;
+    private int mMVMatrixHandle;
     private int mMVPMatrixHandle;
     private int textureUniformHandle;
     private int textureCoordHandle;
@@ -199,7 +161,6 @@ public class Skybox {
 
     private final int vertexCount = boxCoords.length / COORDS_PER_VERTEX;
     private final int vertexStride = COORDS_PER_VERTEX * 4;
-    private final int colourStride = COORDS_PER_COLOUR * 4;
     private final int textureStride = COORDS_PER_TEXTURE * 4;
 
 
@@ -208,7 +169,6 @@ public class Skybox {
         mRenderer = renderer;
         newCubeCoordinates(boxCoords, zFar);
         vertexBuffer = allocateBuffer(boxCoords);
-        //colourBuffer = allocateBuffer(colours);
         textureBuffer = allocateBuffer(textureCoords);
         textureDataHandle = TextureHelper.CubeMapTexture(context, R.raw.back, R.raw.left, R.raw.front, R.raw.right, R.raw.bottom, R.raw.top);
 
@@ -221,19 +181,33 @@ public class Skybox {
         GLES20.glLinkProgram(program);
 
         positionHandle = GLES20.glGetAttribLocation(program, "aPosition");
+        mRenderer.checkGLError("glGetAttribLocation");
         textureUniformHandle = GLES20.glGetUniformLocation(program, "uTexture");
         mRenderer.checkGLError("glGetUniformLocation");
         textureCoordHandle = GLES20.glGetAttribLocation(program, "aTexCoordinate");
         mRenderer.checkGLError("glGetAttribLocation");
+        mMVMatrixHandle = GLES20.glGetUniformLocation(program, "uMVMatrix");
+        mRenderer.checkGLError("glGetUniformLocation");
         mMVPMatrixHandle = GLES20.glGetUniformLocation(program, "uMVPMatrix");
         mRenderer.checkGLError("glGetUniformLocation");
 
+        Matrix.setIdentityM(modelMatrix, 0);
+
     }
 
-    public void draw(float[] mvpMatrix)
+    public void draw(float[] viewMatrix, float[] projectionMatrix)
     {
         GLES20.glUseProgram(program);
 
+        Matrix.setIdentityM(modelMatrix, 0);
+        Matrix.translateM(modelMatrix, 0, 0.0f, 0.0f, -3.5f);
+
+        Matrix.multiplyMM(mvMatrix, 0, viewMatrix, 0, modelMatrix, 0);//modelViewMatrix
+        GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, mvMatrix, 0);
+        mRenderer.checkGLError("glUniformMatrix4fv");
+        Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvMatrix, 0);
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
+        mRenderer.checkGLError("glUniformMatrix4fv");
 
         GLES20.glVertexAttribPointer(positionHandle, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, vertexStride, vertexBuffer);
         GLES20.glEnableVertexAttribArray(positionHandle);
@@ -244,11 +218,6 @@ public class Skybox {
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, textureDataHandle);
         GLES20.glUniform1i(textureUniformHandle, 0);
-
-
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
-        mRenderer.checkGLError("glUniformMatrix4fv");
-
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount);
 

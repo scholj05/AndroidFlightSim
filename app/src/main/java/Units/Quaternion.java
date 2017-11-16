@@ -267,7 +267,7 @@ public class Quaternion {
         return vec.add(uv);
     }
 
-    public Quaternion angleAxis(float angle, Vector3 axis)
+    public static Quaternion angleAxis(float angle, Vector3 axis)
     {
         Quaternion result = new Quaternion();
 
