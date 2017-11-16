@@ -22,6 +22,24 @@ public class Matrix4 {
         _m[14] += v.getZ();
     }
 
+    public float[] translate(Vector3 v)
+    {
+        float[] toReturn = new float[16];
+        toReturn[12] = toReturn[0] * v.x + toReturn[4] * v.y + toReturn[8] * v.z + toReturn[12];
+        toReturn[13] = toReturn[1] * v.x + toReturn[5] * v.y + toReturn[9] * v.z + toReturn[13];
+        toReturn[14] = toReturn[2] * v.x + toReturn[6] * v.y + toReturn[10] * v.z + toReturn[14];
+        toReturn[15] = toReturn[3] * v.x + toReturn[7] * v.y + toReturn[11] * v.z + toReturn[15];
+        return toReturn;
+    }
+
+    public void translateInPlace(Vector3 v)
+    {
+        _m[12] = _m[0] * v.x + _m[4] * v.y + _m[8] * v.z + _m[12];
+        _m[13] = _m[1] * v.x + _m[5] * v.y + _m[9] * v.z + _m[13];
+        _m[14] = _m[2] * v.x + _m[6] * v.y + _m[10] * v.z + _m[14];
+        _m[15] = _m[3] * v.x + _m[7] * v.y + _m[11] * v.z + _m[15];
+    }
+
     /*** Multiplies a vector by this matrix
      *
      * @param v Vector to apply this transformation

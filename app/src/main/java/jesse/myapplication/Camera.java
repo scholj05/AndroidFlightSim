@@ -75,16 +75,16 @@ public class Camera {
     {
 
         orientation = q.mul(orientation);
-        PrintLog();
+        //PrintLog();
     }
 
     public Vector3 GetForward()
     {
-        Log.d("CAMERA", "orientation: " + Float.toString(orientation.x) + ", " + Float.toString(orientation.y) + ", " + Float.toString(orientation.z) + ", " + Float.toString(orientation.w));
+        //Log.d("CAMERA", "orientation: " + Float.toString(orientation.x) + ", " + Float.toString(orientation.y) + ", " + Float.toString(orientation.z) + ", " + Float.toString(orientation.w));
         Quaternion q = orientation.conjugate();
-        Log.d("CAMERA", "q: " + Float.toString(q.x) + ", " + Float.toString(q.y) + ", " + Float.toString(q.z));
+        //Log.d("CAMERA", "q: " + Float.toString(q.x) + ", " + Float.toString(q.y) + ", " + Float.toString(q.z));
         Vector3 forward = q.mul(new Vector3(0.0f, 0.0f, -1.0f));
-        Log.d("CAMERA", "getForward: " + Float.toString(q.x) + ", " + Float.toString(q.y) + ", " + Float.toString(q.z));
+        //Log.d("CAMERA", "getForward: " + Float.toString(q.x) + ", " + Float.toString(q.y) + ", " + Float.toString(q.z));
         return forward;
     }
 
@@ -104,10 +104,15 @@ public class Camera {
 
     public void MoveForward(float movement)
     {
+        Log.d("CAMERA", "______________________________");
         Vector3 forward = GetForward();
+        Log.d("CAMERA", "getForward: " + Float.toString(forward.x) + ", " + Float.toString(forward.y) + ", " + Float.toString(forward.z));
+        Log.d("CAMERA", "movement: " + Float.toString(movement));
         forward.mulInplace(movement);
-        position.addNoCopy(forward);
+        Log.d("CAMERA", "newForward: " + Float.toString(forward.x) + ", " + Float.toString(forward.y) + ", " + Float.toString(forward.z));
         Log.d("CAMERA", "position: " + Float.toString(position.x) + ", " + Float.toString(position.y) + ", " + Float.toString(position.z));
+        position.addNoCopy(forward);
+        Log.d("CAMERA", "newPosition: " + Float.toString(position.x) + ", " + Float.toString(position.y) + ", " + Float.toString(position.z));
     }
 
     public void MoveLeft(float movement)
@@ -133,9 +138,13 @@ public class Camera {
 
     public float[] GetViewMatrixAsArray()
     {
-        Matrix4 viewMatrix = orientation.toMatrix();
+        Matrix4 translatedOrientation = orientation.toMatrix();
+        return translatedOrientation.translate(position);
+        /*Matrix4 viewMatrix = orientation.toMatrix();
+        //PrintLog("orientation: ", viewMatrix.getAsArray());
         viewMatrix.setTranslation(position.mul(-1.0f));
-        return viewMatrix.getAsArray();
+        //PrintLog("orientationAfter: ", viewMatrix.getAsArray());
+        return viewMatrix.getAsArray();*/
     }
 
     public Matrix4 GetInverseViewMatrix()
@@ -184,27 +193,32 @@ public class Camera {
     }
 
 
-    public void PrintLog()
+    public void PrintLog(String title, float[] matrix)
     {
-        float[] matrix = GetViewMatrixAsArray();
         //Log.d("CameraVec", Float.toString(pitch) + ", " + Float.toString(yaw) + ", " + Float.toString(roll));
-        /*Log.d("CameraMatrix",
-                Float.toString(matrix[0]) + ", " +
+        Log.d(title,
+           Float.toString(matrix[0]) + ", " +
                 Float.toString(matrix[1]) + ", " +
                 Float.toString(matrix[2]) + ", " +
-                Float.toString(matrix[3]) + ", \n" +
+                Float.toString(matrix[3]) + ", "
+        );
+        Log.d(title + "2",
                 Float.toString(matrix[4]) + ", " +
                 Float.toString(matrix[5]) + ", " +
                 Float.toString(matrix[6]) + ", " +
-                Float.toString(matrix[7]) + ", \n" +
+                Float.toString(matrix[7]) + ", "
+        );
+        Log.d(title + "3",
                 Float.toString(matrix[8]) + ", " +
-                Float.toString(matrix[9]) + ", " +
-                Float.toString(matrix[10]) + ", " +
-                Float.toString(matrix[11]) + ", \n" +
+                        Float.toString(matrix[9]) + ", " +
+                        Float.toString(matrix[10]) + ", " +
+                        Float.toString(matrix[11]) + ", "
+        );
+        Log.d(title + "4",
                 Float.toString(matrix[12]) + ", " +
-                Float.toString(matrix[13]) + ", " +
-                Float.toString(matrix[14]) + ", " +
-                Float.toString(matrix[15]) + ", "
-        );*/
+                        Float.toString(matrix[13]) + ", " +
+                        Float.toString(matrix[14]) + ", " +
+                        Float.toString(matrix[15]) + ", "
+        );
     }
 }
