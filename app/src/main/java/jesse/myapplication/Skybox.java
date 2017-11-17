@@ -200,7 +200,7 @@ public class Skybox {
         GLES20.glUseProgram(program);
 
         Matrix.setIdentityM(modelMatrix, 0);
-        Matrix.translateM(modelMatrix, 0, 0.0f, 0.0f, -3.5f);
+       //Matrix.translateM(modelMatrix, 0, 0.0f, 0.0f, -3.5f);
 
         Matrix.multiplyMM(mvMatrix, 0, viewMatrix, 0, modelMatrix, 0);//modelViewMatrix
         GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, mvMatrix, 0);

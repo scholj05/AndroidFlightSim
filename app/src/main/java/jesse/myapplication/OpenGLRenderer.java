@@ -30,24 +30,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 
     private Context context;
 
-    private Triangle triangle;
-
-    private Skybox skybox, skybox2;
-    private int skyboxShaderProgram;
-    private int skyboxMVPMatrixHandle;
-    private int skyboxMVMatrixHandle;
-    private int skyboxPositionHandle;
-    private int skyboxTextureUniformHandle;
-    private int skyboxTextureCoordinateHandle;
-
-    private HeightMap heightMap;
-    private int heightmapShaderProgram;
-    private int heightmapMVPMatrixHandle;
-    private int heightmapMVMatrixHandle;
-    private int heightmapPositionHandle;
-    private int heightmapNormalHandle;
-    private int heightmapTextureUniformHandle;
-    private int heightmapTextureCoordinateHandle;
+    private Skybox skybox;
 
     public NewCamera camera;
 
@@ -65,15 +48,12 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
     private static float near = 0.1f;
     private static float far = 1000.0f;
 
-<<<<<<< HEAD
     private HeightMap heightMap;
-=======
     float eyeX = 0, eyeY = 0, eyeZ = -0.5f,
             lookX = 0, lookY = 0, lookZ = -5,
             upX = 0, upY = 1.0f, upZ = 0;
     float pitch = 5, yaw = 5, roll = 5;
 
->>>>>>> ae259343c8fecedfbbddbb645c819095bc608d9c
 
     public OpenGLRenderer(Context context)
     {
@@ -91,31 +71,10 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 
         Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, -eyeZ, lookX, lookY, lookZ, upX, upY, upZ);
 
-        /*int skyboxVertexShader = loadShader(GLES20.GL_VERTEX_SHADER, Shaders.TEXTURE_CUBE_MAP_VERTEX_SHADER);
-        int skyboxFragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, Shaders.TEXTURE_CUBE_MAP_FRAGMENT_SHADER);
-        skyboxShaderProgram = GLES20.glCreateProgram();
-        GLES20.glAttachShader(skyboxShaderProgram, skyboxVertexShader);
-        GLES20.glAttachShader(skyboxShaderProgram, skyboxFragmentShader);
-        GLES20.glLinkProgram(skyboxShaderProgram);
 
-        int heightmapVertexShader = loadShader(GLES20.GL_VERTEX_SHADER, Shaders.TEXTURE_CUBE_MAP_VERTEX_SHADER);
-        int heightmapFragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, Shaders.TEXTURE_CUBE_MAP_FRAGMENT_SHADER);
-        heightmapShaderProgram = GLES20.glCreateProgram();
-        GLES20.glAttachShader(heightmapShaderProgram, heightmapVertexShader);
-        GLES20.glAttachShader(heightmapShaderProgram, heightmapFragmentShader);
-        GLES20.glLinkProgram(heightmapShaderProgram);
-
-
-
-        heightmapMVPMatrixHandle = GLES20.glGetUniformLocation(heightmapShaderProgram, "uMVPMatrix");
-        heightmapMVMatrixHandle = GLES20.glGetUniformLocation(heightmapShaderProgram, "uMVMatrix");
-        heightmapPositionHandle = GLES20.glGetAttribLocation(heightmapShaderProgram, "aPosition");
-        heightmapNormalHandle = GLES20.glGetAttribLocation(heightmapShaderProgram, "aNormal");*/
-
-        //triangle = new Triangle(this);
         skybox = new Skybox(this, context, far);
-<<<<<<< HEAD
-        camera = new Camera(0, 0, 0, 0, 0, 0);
+
+        camera = new NewCamera(0, 0, 0, 0, 0, 0);
 
         heightMap = new HeightMap(this, context);
 
@@ -123,13 +82,11 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
         Vector2 tileSize = new Vector2(100, 100);
         int colCount = 128, rowCount = 128, minHeight = 0, maxHeight = 1000;
         heightMap.Generate(startPos, tileSize, colCount, rowCount, minHeight, maxHeight);
-=======
-        skybox2 = new Skybox(this, context, far / 4);
+
         camera = new NewCamera(0, 0, -50, 0, 0, 0);
 
 
         //Matrix.setIdentityM(mAccumulatedRotation, 0);
->>>>>>> ae259343c8fecedfbbddbb645c819095bc608d9c
     }
 
     @Override
@@ -145,11 +102,8 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
         float left = ratio * bottom;
         float right = ratio * top;
         Matrix.frustumM(mProjectionMatrix, 0, left, right, bottom, top, near, far);
-<<<<<<< HEAD
         Matrix.setLookAtM(mViewMatrix, 0, 0, 5, -0.5f, 0, -5, 5, 0, 0, 1);
-=======
-        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -10, 0, 0, 0, 0, 1, 0);
->>>>>>> ae259343c8fecedfbbddbb645c819095bc608d9c
+        //Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -10, 0, 0, 0, 0, 1, 0);
 
     }
 
@@ -172,7 +126,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 
         mViewMatrix = camera.viewMatrix();
         skybox.draw(mViewMatrix, mProjectionMatrix);
-        skybox2.draw(mViewMatrix, mProjectionMatrix);
         /*float[] scratch = new float[16];
         float[] skyboxScratch = new float[16];
 
@@ -185,16 +138,13 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
         Matrix.multiplyMM(skyboxScratch, 0, mMVPMatrix, 0,  mSkyboxRotationMatrix, 0);
         skybox.draw(skyboxScratch);*/
 
-<<<<<<< HEAD
 //        long time = SystemClock.uptimeMillis() % 4000L;
 //        float angle = 0.090f * ((int) time);
 //        Matrix.setRotateM(mRotationMatrix, 0, angle, 0, 0, -1.0f);
 //
 //        Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
         //skybox.draw(skyboxScratch);
-        heightMap.draw();
-=======
->>>>>>> ae259343c8fecedfbbddbb645c819095bc608d9c
+        heightMap.draw(mViewMatrix, mProjectionMatrix);
     }
 
     public static int loadShader(int type, String ShaderCode)

@@ -52,18 +52,22 @@ public class OpenGLView extends GLSurfaceView{
 
             if (rotateOrTranslate)
             {
-                camera.updateRoll((event.getX() - touchX) / 100f);
-                camera.updatePitch((event.getY() - touchY) / 100f);
+                camera.updateRoll((event.getX() - touchX) / 10f);
+                camera.updatePitch((event.getY() - touchY) / 10f);
             }
             else
             {
-               camera.updateYaw((event.getX() - touchX) / 100f);
+               camera.updateYaw((event.getX() - touchX) / 10f);
                camera.updateFlightSpeed((event.getY() - touchY) / 100f);
             }
 
 
             touchX = event.getX();
             touchY = event.getY();
+        }
+        else if (event.getAction() == MotionEvent.ACTION_UP)
+        {
+            camera.stop();
         }
         return true;
     }

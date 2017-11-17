@@ -250,7 +250,7 @@ public class HeightMap {
 
     }
 
-    public void draw()
+    public void draw(float[] viewMatrix, float[] projectionMatrix)
     {
         GLES20.glUseProgram(program);
 

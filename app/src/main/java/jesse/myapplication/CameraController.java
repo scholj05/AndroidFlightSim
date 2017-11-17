@@ -9,13 +9,14 @@ import android.util.Log;
 public class CameraController {
     static NewCamera camera;
     float flightSpeed;
+    float baseSpeed;
     float pitch;
     float yaw;
     float roll;
 
     public CameraController(float startSpeed)
     {
-        flightSpeed = startSpeed;
+        flightSpeed = baseSpeed = startSpeed;
 
     }
 
@@ -26,19 +27,17 @@ public class CameraController {
 
     public void update()
     {
-        Log.d("CAMERACONTROLLER", "pre");
-
         if (camera == null) return;
-        Log.d("CAMERACONTROLLER", "update");
-        camera.translate(0, 0, flightSpeed);
         camera.pitch(pitch);
         camera.yaw(yaw);
         camera.roll(roll);
+        camera.translate(0, 0, flightSpeed);
     }
 
     public void updateFlightSpeed(float delta)
     {
-        flightSpeed += delta;
+        delta = delta;
+        flightSpeed = ((flightSpeed + delta) <= baseSpeed ? flightSpeed + delta : flightSpeed);
     }
 
     public void updatePitch(float delta)
@@ -54,6 +53,11 @@ public class CameraController {
     public void updateRoll(float delta)
     {
         roll += delta;
+    }
+
+    public void stop()
+    {
+        pitch = yaw = roll = 0;
     }
 
 }

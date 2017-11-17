@@ -60,7 +60,9 @@ public class NewCamera {
     public void translate(Vector3 v)
     {
         Quaternion vQuat = new Quaternion(v, 1);
+        Log.d("TRANSLATE", "vQuat: " + Float.toString(vQuat.x) + ", " + Float.toString(vQuat.y) + ", " + Float.toString(vQuat.z) + ", " + Float.toString(vQuat.w));
         vQuat.mulInplace(mOrientation);
+        Log.d("TRANSLATE", "vQuatMul: " + Float.toString(vQuat.x) + ", " + Float.toString(vQuat.y) + ", " + Float.toString(vQuat.z) + ", " + Float.toString(vQuat.w));
         mPosition = mPosition.add(new Vector3(vQuat.x, vQuat.y, vQuat.z));
     }
 
