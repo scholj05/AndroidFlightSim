@@ -78,7 +78,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
         heightMapNew = new HeightMapNew(this, this.context, 0);
         camera = new NewCamera(0, 0, 0, 0, 0, 0);
 
-//        //heightMap = new HeightMap(this, context);
+        heightMap = new HeightMap(this, context);
 //
 //        Vector3 startPos = new Vector3(0, 0, 0);
 //        Vector2 tileSize = new Vector2(100, 100);
@@ -147,7 +147,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 //
 //        Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
         //skybox.draw(skyboxScratch);
-        //heightMap.draw(mViewMatrix, mProjectionMatrix);
+        heightMap.draw(mViewMatrix, mProjectionMatrix);
     }
 
     public static int loadShader(int type, String ShaderCode)

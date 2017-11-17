@@ -22,9 +22,9 @@ import util.ShaderHelper;
 
 public class HeightMap {
 
-    static final int SIZE_PER_SIDE = 64;
+    static final int SIZE_PER_SIDE = 32;
     static final float MIN_POSITION = -5f;
-    static final float POSITION_RANGE = 100f;
+    static final float POSITION_RANGE = 10f;
 
     final int[] vbo = new int[1];
     final int[] ibo = new int[1];
@@ -301,7 +301,10 @@ public class HeightMap {
 //        Log.d("CameraXYZ", xyz);
 //        float x = 0, y = 0, z = 0;
         Matrix.setIdentityM(modelMatrix, 0);
+        Matrix.scaleM(modelMatrix, 0, 50, 50, 50);
+        Matrix.translateM(modelMatrix, 0, 550, 550, 550);
         //Matrix.translateM(modelMatrix, 0, 0.0f, 0.0f, -3.5f);
+        Matrix.setRotateM(modelMatrix, 0, -180, 0, 1f, 0f);
 
         Matrix.multiplyMM(temporaryMatrix, 0, viewMatrix, 0, modelMatrix, 0);//modelViewMatrix
         GLES20.glUniformMatrix4fv(mvMatrixUniform, 1, false, temporaryMatrix, 0);
@@ -329,7 +332,7 @@ public class HeightMap {
 
             // Draw
             GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, ibo[0]);
-            GLES20.glDrawElements(GLES20.GL_TRIANGLES, indexCount, GLES20.GL_UNSIGNED_SHORT, 0);
+            GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, indexCount, GLES20.GL_UNSIGNED_SHORT, 0);
 
             GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
             GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
