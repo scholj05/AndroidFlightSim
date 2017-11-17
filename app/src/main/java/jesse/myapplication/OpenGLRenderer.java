@@ -44,6 +44,8 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
     private final float[] mSkyboxRotationMatrix = new float[16];
     private final float[] mTempMatrix = new float[16];
 
+    private HeightMapNew heightMapNew;
+
     private static float fov = 90.0f;
     private static float near = 0.1f;
     private static float far = 1000.0f;
@@ -64,24 +66,24 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
     public void onSurfaceCreated(GL10 GL10, EGLConfig eglConfig) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f); //black wipe
         GLES20.glClearDepthf(1.0f);
-        GLES20.glEnable(GLES20.GL_CULL_FACE);
-        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-        GLES20.glDepthFunc(GLES20.GL_LEQUAL);
+        //GLES20.glEnable(GLES20.GL_CULL_FACE);
+        //GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+        //GLES20.glDepthFunc(GLES20.GL_LEQUAL);
         //GLES20.glDisable(GLES20.GL_BLEND);
 
         Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, -eyeZ, lookX, lookY, lookZ, upX, upY, upZ);
 
 
         skybox = new Skybox(this, context, far);
-
+        heightMapNew = new HeightMapNew(this, this.context, 0);
         camera = new NewCamera(0, 0, 0, 0, 0, 0);
 
-        heightMap = new HeightMap(this, context);
-
-        Vector3 startPos = new Vector3(0, 0, 0);
-        Vector2 tileSize = new Vector2(100, 100);
-        int colCount = 128, rowCount = 128, minHeight = 0, maxHeight = 1000;
-        heightMap.Generate(startPos, tileSize, colCount, rowCount, minHeight, maxHeight);
+//        //heightMap = new HeightMap(this, context);
+//
+//        Vector3 startPos = new Vector3(0, 0, 0);
+//        Vector2 tileSize = new Vector2(100, 100);
+//        int colCount = 128, rowCount = 128, minHeight = 0, maxHeight = 1000;
+//        heightMap.Generate(startPos, tileSize, colCount, rowCount, minHeight, maxHeight);
 
         camera = new NewCamera(0, 0, -50, 0, 0, 0);
 
@@ -126,6 +128,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 
         mViewMatrix = camera.viewMatrix();
         skybox.draw(mViewMatrix, mProjectionMatrix);
+        heightMapNew.draw(mViewMatrix, mProjectionMatrix);
         /*float[] scratch = new float[16];
         float[] skyboxScratch = new float[16];
 
@@ -144,7 +147,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer{
 //
 //        Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
         //skybox.draw(skyboxScratch);
-        heightMap.draw(mViewMatrix, mProjectionMatrix);
+        //heightMap.draw(mViewMatrix, mProjectionMatrix);
     }
 
     public static int loadShader(int type, String ShaderCode)

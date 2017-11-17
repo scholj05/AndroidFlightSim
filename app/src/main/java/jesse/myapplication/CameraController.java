@@ -37,7 +37,8 @@ public class CameraController {
     public void updateFlightSpeed(float delta)
     {
         delta = delta;
-        flightSpeed = ((flightSpeed + delta) <= baseSpeed ? flightSpeed + delta : flightSpeed);
+        //flightSpeed = ((flightSpeed + delta) <= baseSpeed ? flightSpeed + delta : flightSpeed);
+        flightSpeed += delta;
     }
 
     public void updatePitch(float delta)

@@ -22,9 +22,9 @@ import util.ShaderHelper;
 
 public class HeightMap {
 
-    static final int SIZE_PER_SIDE = 32;
+    static final int SIZE_PER_SIDE = 64;
     static final float MIN_POSITION = -5f;
-    static final float POSITION_RANGE = 1000f;
+    static final float POSITION_RANGE = 100f;
 
     final int[] vbo = new int[1];
     final int[] ibo = new int[1];
@@ -147,9 +147,9 @@ public class HeightMap {
                     heightMapVertexData[offset++] = normalVector[2] / length;
 
                     // Add some fancy colors.
-                    heightMapVertexData[offset++] = xRatio;
-                    heightMapVertexData[offset++] = yRatio;
-                    heightMapVertexData[offset++] = 0.5f;
+                    heightMapVertexData[offset++] = 1f;
+                    heightMapVertexData[offset++] = 0f;
+                    heightMapVertexData[offset++] = 0f;
                     heightMapVertexData[offset++] = 1f;
                 }
             }
@@ -217,6 +217,9 @@ public class HeightMap {
             //errorHandler.handleError(ErrorType.BUFFER_CREATION_ERROR, t.getLocalizedMessage());
         }
 
+        // Enable depth testing
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+
         final String vertexShader = Shaders.per_pixel_vertex_shader_no_text;
         final String fragmentShader = Shaders.per_pixel_fragment_shader_no_tex;
 
@@ -253,47 +256,59 @@ public class HeightMap {
     public void draw(float[] viewMatrix, float[] projectionMatrix)
     {
         GLES20.glUseProgram(program);
-
-        // Draw the heightmap.
-        // Translate the heightmap into the screen.
+//
+//        // Draw the heightmap.
+//        // Translate the heightmap into the screen.
+//        Matrix.setIdentityM(modelMatrix, 0);
+//        Matrix.translateM(modelMatrix, 0, 0.0f, 0.0f, -12f);
+//
+//        // Set a matrix that contains the current rotation.
+//        Matrix.setIdentityM(currentRotation, 0);
+//        Matrix.rotateM(currentRotation, 0, deltaX, 0.0f, 1.0f, 0.0f);
+//        Matrix.rotateM(currentRotation, 0, deltaY, 1.0f, 0.0f, 0.0f);
+//        deltaX = 0.0f;
+//        deltaY = 0.0f;
+//
+//        // Multiply the current rotation by the accumulated rotation, and then
+//        // set the accumulated rotation to the result.
+//        Matrix.multiplyMM(temporaryMatrix, 0, currentRotation, 0, accumulatedRotation, 0);
+//        System.arraycopy(temporaryMatrix, 0, accumulatedRotation, 0, 16);
+//
+//        // Rotate the cube taking the overall rotation into account.
+//        Matrix.multiplyMM(temporaryMatrix, 0, modelMatrix, 0, accumulatedRotation, 0);
+//        System.arraycopy(temporaryMatrix, 0, modelMatrix, 0, 16);
+//
+//        // This multiplies the view matrix by the model matrix, and stores
+//        // the result in the MVP matrix
+//        // (which currently contains model * view).
+//        Matrix.multiplyMM(mvpMatrix, 0, viewMatrix, 0, modelMatrix, 0);
+//
+//        // Pass in the modelview matrix.
+//        GLES20.glUniformMatrix4fv(mvMatrixUniform, 1, false, mvpMatrix, 0);
+//
+//        // This multiplies the modelview matrix by the projection matrix,
+//        // and stores the result in the MVP matrix
+//        // (which now contains model * view * projection).
+//        Matrix.multiplyMM(temporaryMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
+//        System.arraycopy(temporaryMatrix, 0, mvpMatrix, 0, 16);
+//
+//        // Pass in the combined matrix.
+//        GLES20.glUniformMatrix4fv(mvpMatrixUniform, 1, false, mvpMatrix, 0);
+//
+//        // Pass in the light position in eye space.
+//        //GLES20.glUniform3f(lightPosUniform, lightPosInEyeSpace[0], lightPosInEyeSpace[1], lightPosInEyeSpace[2]);
+//        String xyz = CameraController.camera.position().getX() + " " + CameraController.camera.position().getY() + " " + CameraController.camera.position().getZ();
+//        Log.d("CameraXYZ", xyz);
+//        float x = 0, y = 0, z = 0;
         Matrix.setIdentityM(modelMatrix, 0);
-        Matrix.translateM(modelMatrix, 0, 0.0f, 0.0f, -12f);
+        //Matrix.translateM(modelMatrix, 0, 0.0f, 0.0f, -3.5f);
 
-        // Set a matrix that contains the current rotation.
-        Matrix.setIdentityM(currentRotation, 0);
-        Matrix.rotateM(currentRotation, 0, deltaX, 0.0f, 1.0f, 0.0f);
-        Matrix.rotateM(currentRotation, 0, deltaY, 1.0f, 0.0f, 0.0f);
-        deltaX = 0.0f;
-        deltaY = 0.0f;
-
-        // Multiply the current rotation by the accumulated rotation, and then
-        // set the accumulated rotation to the result.
-        Matrix.multiplyMM(temporaryMatrix, 0, currentRotation, 0, accumulatedRotation, 0);
-        System.arraycopy(temporaryMatrix, 0, accumulatedRotation, 0, 16);
-
-        // Rotate the cube taking the overall rotation into account.
-        Matrix.multiplyMM(temporaryMatrix, 0, modelMatrix, 0, accumulatedRotation, 0);
-        System.arraycopy(temporaryMatrix, 0, modelMatrix, 0, 16);
-
-        // This multiplies the view matrix by the model matrix, and stores
-        // the result in the MVP matrix
-        // (which currently contains model * view).
-        Matrix.multiplyMM(mvpMatrix, 0, viewMatrix, 0, modelMatrix, 0);
-
-        // Pass in the modelview matrix.
-        GLES20.glUniformMatrix4fv(mvMatrixUniform, 1, false, mvpMatrix, 0);
-
-        // This multiplies the modelview matrix by the projection matrix,
-        // and stores the result in the MVP matrix
-        // (which now contains model * view * projection).
-        Matrix.multiplyMM(temporaryMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
-        System.arraycopy(temporaryMatrix, 0, mvpMatrix, 0, 16);
-
-        // Pass in the combined matrix.
+        Matrix.multiplyMM(temporaryMatrix, 0, viewMatrix, 0, modelMatrix, 0);//modelViewMatrix
+        GLES20.glUniformMatrix4fv(mvMatrixUniform, 1, false, temporaryMatrix, 0);
+        mRenderer.checkGLError("glUniformMatrix4fv");
+        Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, temporaryMatrix, 0);
         GLES20.glUniformMatrix4fv(mvpMatrixUniform, 1, false, mvpMatrix, 0);
-
-        // Pass in the light position in eye space.
-        //GLES20.glUniform3f(lightPosUniform, lightPosInEyeSpace[0], lightPosInEyeSpace[1], lightPosInEyeSpace[2]);
+        mRenderer.checkGLError("glUniformMatrix4fv");
 
 
         if (vbo[0] > 0 && ibo[0] > 0) {
@@ -314,11 +329,13 @@ public class HeightMap {
 
             // Draw
             GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, ibo[0]);
-            GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, indexCount, GLES20.GL_UNSIGNED_SHORT, 0);
+            GLES20.glDrawElements(GLES20.GL_TRIANGLES, indexCount, GLES20.GL_UNSIGNED_SHORT, 0);
 
             GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
             GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
         }
+
+
         /*
         float diffuse;
 
