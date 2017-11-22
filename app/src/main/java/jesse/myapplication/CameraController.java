@@ -31,7 +31,7 @@ public class CameraController {
         camera.pitch(pitch);
         camera.yaw(yaw);
         camera.roll(roll);
-        camera.translate(0, 0, flightSpeed);
+        //camera.translate(0, 0, flightSpeed);
     }
 
     public void updateFlightSpeed(float delta)

@@ -237,6 +237,10 @@ public class HeightMap {
         normalAttribute = GLES20.glGetAttribLocation(program, NORMAL_ATTRIBUTE);
         colorAttribute = GLES20.glGetAttribLocation(program, COLOR_ATTRIBUTE);
 
+        Matrix.setIdentityM(modelMatrix, 0);
+        //Matrix.rotateM(modelMatrix, 0, 10, 1, 1, 0);
+        // matrix, offset, amount of rotation, percentage on x axis, percentage on y, percentage on z
+
     }
 
 
@@ -261,8 +265,8 @@ public class HeightMap {
 //
 //        // Draw the heightmap.
 //        // Translate the heightmap into the screen.
-//        Matrix.setIdentityM(modelMatrix, 0);
-//        Matrix.translateM(modelMatrix, 0, 0.0f, 0.0f, -12f);
+        //Matrix.setIdentityM(modelMatrix, 0);
+        //        Matrix.translateM(modelMatrix, 0, 0.0f, 0.0f, -12f);
 //
 //        // Set a matrix that contains the current rotation.
 //        Matrix.setIdentityM(currentRotation, 0);
@@ -303,7 +307,7 @@ public class HeightMap {
 //        Log.d("CameraXYZ", xyz);
 //        float x = 0, y = 0, z = 0;
 
-        Matrix.setIdentityM(modelMatrix, 0);
+        Matrix.rotateM(modelMatrix, 0, 10, 1, 1, 0);
 
         Matrix.multiplyMM(temporaryMatrix, 0, viewMatrix, 0, modelMatrix, 0);//modelViewMatrix
         GLES20.glUniformMatrix4fv(mvMatrixUniform, 1, false, temporaryMatrix, 0);

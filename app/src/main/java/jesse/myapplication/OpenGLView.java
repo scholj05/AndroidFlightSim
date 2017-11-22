@@ -58,7 +58,7 @@ public class OpenGLView extends GLSurfaceView{
             else
             {
                camera.updateYaw((event.getX() - touchX) / 10f);
-               camera.updateFlightSpeed((event.getY() - touchY) / 100f);
+               //camera.updateFlightSpeed((event.getY() - touchY) / 100f);
             }
 
 

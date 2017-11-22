@@ -53,7 +53,7 @@ public class NewCamera {
         Matrix.setIdentityM(hold, 0);
         Matrix.multiplyMM(hold, 0, view, 0, mOrientation.toMatrix().getAsArray(), 0);
         Matrix.invertM(view, 0, hold, 0);
-        PrintLog("view", view);
+        //PrintLog("view", view);
         return view;
     }
 
