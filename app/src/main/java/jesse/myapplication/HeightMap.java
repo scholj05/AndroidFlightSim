@@ -123,7 +123,7 @@ public class HeightMap {
                     // Position
                     heightMapVertexData[offset++] = xPosition;
                     heightMapVertexData[offset++] = yPosition;
-                    heightMapVertexData[offset++] = ((xPosition * xPosition) + (yPosition * yPosition)) / 1000f;
+                    heightMapVertexData[offset++] = ((xPosition * xPosition) + (yPosition * yPosition)) / 10f;
 
                     // Cheap normal using a derivative of the function.
                     // The slope for X will be 2X, for Y will be 2Y.
@@ -147,8 +147,8 @@ public class HeightMap {
                     heightMapVertexData[offset++] = normalVector[2] / length;
 
                     // Add some fancy colors.
-                    heightMapVertexData[offset++] = 1f;
                     heightMapVertexData[offset++] = 0f;
+                    heightMapVertexData[offset++] = 0.1f;
                     heightMapVertexData[offset++] = 0f;
                     heightMapVertexData[offset++] = 1f;
                 }
@@ -238,7 +238,8 @@ public class HeightMap {
         colorAttribute = GLES20.glGetAttribLocation(program, COLOR_ATTRIBUTE);
 
         Matrix.setIdentityM(modelMatrix, 0);
-        //Matrix.rotateM(modelMatrix, 0, 10, 1, 1, 0);
+        Matrix.rotateM(modelMatrix, 0, 90, 1, 0, 0);
+        Matrix.scaleM(modelMatrix, 0, 100, 100, 100);
         // matrix, offset, amount of rotation, percentage on x axis, percentage on y, percentage on z
 
     }
@@ -306,8 +307,6 @@ public class HeightMap {
 //        String xyz = CameraController.camera.position().getX() + " " + CameraController.camera.position().getY() + " " + CameraController.camera.position().getZ();
 //        Log.d("CameraXYZ", xyz);
 //        float x = 0, y = 0, z = 0;
-
-        Matrix.rotateM(modelMatrix, 0, 10, 1, 1, 0);
 
         Matrix.multiplyMM(temporaryMatrix, 0, viewMatrix, 0, modelMatrix, 0);//modelViewMatrix
         GLES20.glUniformMatrix4fv(mvMatrixUniform, 1, false, temporaryMatrix, 0);
