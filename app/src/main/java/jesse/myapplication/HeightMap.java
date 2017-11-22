@@ -17,7 +17,7 @@ import Units.Vector3;
 import util.ShaderHelper;
 
 /**
- * Created by Jesse on 12/11/2017.
+ * Created by Steven on 12/11/2017.
  */
 
 public class HeightMap {
@@ -123,7 +123,7 @@ public class HeightMap {
                     // Position
                     heightMapVertexData[offset++] = xPosition;
                     heightMapVertexData[offset++] = yPosition;
-                    heightMapVertexData[offset++] = ((xPosition * xPosition) + (yPosition * yPosition)) / 10f;
+                    heightMapVertexData[offset++] = ((xPosition * xPosition) + (yPosition * yPosition)) / 1000f;
 
                     // Cheap normal using a derivative of the function.
                     // The slope for X will be 2X, for Y will be 2Y.
@@ -239,6 +239,8 @@ public class HeightMap {
 
     }
 
+
+
     public void checkGLError(String gl)
     {
         int error = GLES20.glGetError();
@@ -300,11 +302,8 @@ public class HeightMap {
 //        String xyz = CameraController.camera.position().getX() + " " + CameraController.camera.position().getY() + " " + CameraController.camera.position().getZ();
 //        Log.d("CameraXYZ", xyz);
 //        float x = 0, y = 0, z = 0;
+
         Matrix.setIdentityM(modelMatrix, 0);
-        Matrix.scaleM(modelMatrix, 0, 50, 50, 50);
-        Matrix.translateM(modelMatrix, 0, 550, 550, 550);
-        //Matrix.translateM(modelMatrix, 0, 0.0f, 0.0f, -3.5f);
-        Matrix.setRotateM(modelMatrix, 0, -180, 0, 1f, 0f);
 
         Matrix.multiplyMM(temporaryMatrix, 0, viewMatrix, 0, modelMatrix, 0);//modelViewMatrix
         GLES20.glUniformMatrix4fv(mvMatrixUniform, 1, false, temporaryMatrix, 0);
